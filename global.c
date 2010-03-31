@@ -76,6 +76,36 @@ void getSymbolTypePrintout(symtabEntryType  type, char * writeIn){
 	}
 }
 
+symtabEntry * find_symbol(char * name, symtabEntry * vater) {
+	symtabEntry * current_symbol = theSymboltable;
+	if (current_symbol == NULL) return NULL;
+
+	do  {
+		if (current_symbol->vater == vater) {
+			if (strcmp(current_symbol->name, name) == 0) {
+				return current_symbol;
+			}
+		}
+	} while (current_symbol->next && (current_symbol = current_symbol->next));
+
+	return NULL;
+}
+
+symtabEntry * find_or_create_symbol(char * name, symtabEntryType type, symtabEntryType internType,
+		int offset, int line, int index1, int index2, symtabEntry * vater, int parameter) {
+
+	symtabEntry * symbol = find_symbol(name, vater);
+
+	if (symbol != NULL) {
+		symbol->offset = offset;
+		symbol->line = line;
+	} else {
+		symbol = new_symbol(name, type, internType, offset, line, index1, index2, vater, parameter);
+	}
+
+	return symbol;
+}
+
 symtabEntry * new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
 		int offset, int line, int index1, int index2, symtabEntry * vater, int parameter) {
 
@@ -118,23 +148,23 @@ void append_to_symbol_table(symtabEntry * new_symbol) {
 }
 
 symtabEntry * add_integer_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return new_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, 0);
 }
 
 symtabEntry * add_integer_symbol(char * name, int line, symtabEntry * parent) {
-	return new_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, 0);
 }
 
 symtabEntry * add_real_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return new_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
 }
 
 symtabEntry * add_real_symbol(char * name, int line, symtabEntry * parent) {
-	return new_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
 }
 
 symtabEntry * add_function_symbol(char * name, int line, int parameters, int body_offset) {
-	return new_symbol(name, FUNC, NOP, parameters * 4 + body_offset, line, 0, 0, 0, parameters);
+	return find_or_create_symbol(name, FUNC, NOP, parameters * 4 + body_offset, line, 0, 0, 0, parameters);
 }
 
 void yyerror(char * str) {
