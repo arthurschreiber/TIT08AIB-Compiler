@@ -1,6 +1,11 @@
 
 float questionmark (int x, int y);
 
+void test (int x, int y) {
+	//what makes this function
+	float result;
+}
+
 int main (void){
 	
 	int variable_1;

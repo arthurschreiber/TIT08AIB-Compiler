@@ -174,8 +174,9 @@ symtabEntry * add_real_symbol(char * name, int line, symtabEntry * parent) {
 	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
 }
 
-symtabEntry * add_function_symbol(char * name, int line, int parameters, int body_offset) {
-	return find_or_create_symbol(name, FUNC, NOP, parameters * 4 + body_offset, line, 0, 0, 0, parameters);
+symtabEntry * add_function_symbol(char * name, symtabEntryType type, int line, int parameters, int body_offset) {
+	symtabEntryType function_type = (type == NOP) ? PROC : FUNC;
+	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, line, 0, 0, 0, parameters);
 }
 
 void yyerror(char * str) {

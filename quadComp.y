@@ -21,6 +21,7 @@ symtabEntry * scope = 0;
 
 %type<string> IDENTIFIER id
 %type<number> declaration_list declaration parameter_list function_body
+%type<type> var_type
 
 %left LOG_AND LOG_OR
 %left LESS_OR_EQUAL GREATER_OR_EQUAL NOT_EQUAL EQUAL '<' '>'
@@ -38,8 +39,14 @@ programm
     ;
 
 function
-    : var_type id '(' parameter_list ')' ';' { scope = add_function_symbol($2, yyget_lineno(), $4, 0); printf("Entering bla\n"); }
-    | var_type id '(' parameter_list ')' function_body { scope = add_function_symbol($2, yyget_lineno(), $4, $6); printf("Entering bla\n"); }
+    : var_type id '(' parameter_list ')' ';' {
+    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, 0);
+    	printf("Entering bla\n");
+    }
+    | var_type id '(' parameter_list ')' function_body {
+    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, $6);
+    	printf("Entering bla\n");
+    }
     ;
 
 function_body
@@ -69,9 +76,9 @@ parameter_list
     ;
 
 var_type
-    : INT 
-    | VOID
-    | FLOAT
+    : INT { $$ = INTEGER; }
+    | VOID { $$ = NOP; }
+    | FLOAT { $$ = REAL; }
     ;
 
 
