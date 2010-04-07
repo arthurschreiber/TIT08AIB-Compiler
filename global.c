@@ -148,7 +148,7 @@ void append_to_symbol_table(symtabEntry * new_symbol) {
 }
 
 symtabEntry * add_integer_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, parameter);
 }
 
 symtabEntry * add_integer_symbol(char * name, int line, symtabEntry * parent) {
@@ -167,7 +167,7 @@ symtabEntry * add_variable_declaration(char * name, symtabEntryType type, int li
 }
 
 symtabEntry * add_real_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, parameter);
 }
 
 symtabEntry * add_real_symbol(char * name, int line, symtabEntry * parent) {
