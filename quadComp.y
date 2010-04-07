@@ -1,7 +1,7 @@
 %{
 //Prologue
-#include "quadComp.tab.h"
 #include "global.h"
+#include "quadComp.tab.h"
 
 symtabEntry * scope = 0;
 
@@ -12,6 +12,7 @@ symtabEntry * scope = 0;
 {
 	int number;
 	char * string;
+	symtabEntryType type;
 }
 
 %token INT FLOAT VOID INC_OP DEC_OP LOG_AND LOG_OR NOT_EQUAL EQUAL

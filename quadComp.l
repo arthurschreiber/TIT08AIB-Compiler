@@ -4,6 +4,7 @@
 %{
 
 #include <string.h>
+#include "global.h"
 #include "quadComp.tab.h"
 
 %}
