@@ -45,6 +45,7 @@ function
 function_body
     : '{' statement_list '}' { $$ = 0; scope = 0; printf("Exiting bla\n"); }
     | '{' declaration_list statement_list '}' { $$ = $2; scope = 0; printf("Exiting bla\n"); }
+    | '{' declaration_list '}' { $$ = 2; scope = 0; printf("Exiting bla\n"); }
     ;
 
 declaration_list
