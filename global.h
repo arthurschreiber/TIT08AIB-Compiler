@@ -32,7 +32,9 @@ symtabEntry * add_integer_symbol(char * name, int line, symtabEntry * parent);
 symtabEntry * add_real_param_symbol(char * name, int line, symtabEntry * parent, int parameter);
 symtabEntry * add_real_symbol(char * name, int line, symtabEntry * parent);
 
-symtabEntry * add_function_symbol(char * name, int line, int parameters, int body_offsets);
+symtabEntry * add_variable_declaration(char * name, symtabEntryType type, int line, symtabEntry * parent);
+
+symtabEntry * add_function_symbol(char * name, symtabEntryType type, int line, int parameters, int body_offsets);
 
 void getSymbolTypePrintout(symtabEntryType type, char * writeIn);
 void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile);

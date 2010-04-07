@@ -155,6 +155,17 @@ symtabEntry * add_integer_symbol(char * name, int line, symtabEntry * parent) {
 	return find_or_create_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, 0);
 }
 
+symtabEntry * add_variable_declaration(char * name, symtabEntryType type, int line, symtabEntry * parent) {
+	switch (type) {
+		case INTEGER:
+			return add_integer_symbol(name, line, parent);
+		case REAL:
+			return add_real_symbol(name, line, parent);
+		default:
+			return NULL;
+	}
+}
+
 symtabEntry * add_real_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
 	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
 }

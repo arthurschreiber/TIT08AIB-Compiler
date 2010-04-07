@@ -53,9 +53,9 @@ declaration_list
     ;
 
 declaration
-    : INT id { $$ = 4; add_integer_symbol($2, yyget_lineno(), scope); }
-    | FLOAT id { $$ = 4; add_real_symbol($2, yyget_lineno(), scope); }
-    | declaration ',' id { $$ = $1 + 4; }
+    : INT id { $$ = INTEGER; add_variable_declaration($2, INTEGER, yyget_lineno(), scope); }
+    | FLOAT id { $$ = REAL; add_variable_declaration($2, REAL, yyget_lineno(), scope); }
+    | declaration ',' id { $$ = $1; add_variable_declaration($3, $1, yyget_lineno(), scope); }
     ;
 
 parameter_list
