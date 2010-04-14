@@ -1,5 +1,6 @@
 %option noyywrap
 %option nodefault
+%option yylineno
 
 %{
 
@@ -40,7 +41,7 @@ return { return RETURN; }
 
 (\/\*(.*)\*\/)|\/\/(.*) { /* COMMENTS */ }
 
-\n { yylineno++; }
+\n { }
 ([ ]|\t)* { }
 
 [();,{}=/<*!] { return yytext[0]; }
