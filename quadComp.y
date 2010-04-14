@@ -3,7 +3,7 @@
 #include "global.h"
 #include "quadComp.tab.h"
 
-symtabEntry * scope = 0;
+symtabEntry * scope;
 
 %}
 //Bison declarations
@@ -40,19 +40,21 @@ programm
 
 function
     : var_type id '(' parameter_list ')' ';' {
-    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, 0);
-    	printf("Entering bla\n");
+	    update_and_append_scope(scope, $2, $1, yyget_lineno(), $4);
+//    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, 0);
+    	scope = new_symbol();
     }
     | var_type id '(' parameter_list ')' function_body {
-    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, $6);
-    	printf("Entering bla\n");
+    	update_and_append_scope(scope, $2, $1, yyget_lineno(), $4);
+//    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, $6);
+    	scope = new_symbol();
     }
     ;
 
 function_body
-    : '{' statement_list '}' { $$ = 0; scope = 0; printf("Exiting bla\n"); }
-    | '{' declaration_list statement_list '}' { $$ = $2; scope = 0; printf("Exiting bla\n"); }
-    | '{' declaration_list '}' { $$ = 2; scope = 0; printf("Exiting bla\n"); }
+    : '{' statement_list '}' { $$ = 0; printf("Exiting bla\n"); }
+    | '{' declaration_list statement_list '}' { $$ = $2; printf("Exiting bla\n"); }
+    | '{' declaration_list '}' { $$ = 2; printf("Exiting bla\n"); }
     ;
 
 declaration_list

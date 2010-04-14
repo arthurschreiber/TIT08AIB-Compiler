@@ -194,13 +194,26 @@ symtabEntry * add_function_symbol(char * name, symtabEntryType type, int line, i
 	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, line, 0, parameters);
 }
 
+void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int line, int parameter_count) {
+	scope->name      = strdup(name);
+	scope->line      = line;
+	scope->type      = type;
+	scope->parameter = parameter_count;
+
+    append_to_symbol_table(scope);
+}
+
 void yyerror(char * str) {
 	printf("ERROR on Line #%i: %s \n", yyget_lineno(), str);
 }
 
 int yyparse(void);
 
+extern symtabEntry * scope;
+
 int main (void){
+	scope = new_symbol();
+
 	if ((yyin = fopen("./input.c", "r")) != 0) {
 		yyparse();
 	}

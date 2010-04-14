@@ -24,6 +24,7 @@ typedef struct a_symtabEntry{
 } symtabEntry;
 
 void append_to_symbol_table(symtabEntry * new_symbol);
+symtabEntry * new_symbol();
 symtabEntry * append_new_symbol(char *, symtabEntryType, symtabEntryType, int, int, symtabEntry *, int);
 
 symtabEntry * add_integer_param_symbol(char * name, int line, symtabEntry * parent, int parameter);
@@ -35,6 +36,8 @@ symtabEntry * add_real_symbol(char * name, int line, symtabEntry * parent);
 symtabEntry * add_variable_declaration(char * name, symtabEntryType type, int line, symtabEntry * parent);
 
 symtabEntry * add_function_symbol(char * name, symtabEntryType type, int line, int parameters, int body_offsets);
+
+void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int line, int parameter_count);
 
 void getSymbolTypePrintout(symtabEntryType type, char * writeIn);
 void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile);
