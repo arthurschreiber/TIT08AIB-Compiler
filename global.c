@@ -100,13 +100,13 @@ symtabEntry * find_or_create_symbol(char * name, symtabEntryType type, symtabEnt
 		symbol->offset = offset;
 		symbol->line = line;
 	} else {
-		symbol = new_symbol(name, type, internType, offset, line, index1, index2, vater, parameter);
+		symbol = append_new_symbol(name, type, internType, offset, line, index1, index2, vater, parameter);
 	}
 
 	return symbol;
 }
 
-symtabEntry * new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
+symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
 		int offset, int line, int index1, int index2, symtabEntry * vater, int parameter) {
 
 	printf("Creating %s \n", name);
@@ -131,19 +131,19 @@ symtabEntry * new_symbol(char * name, symtabEntryType type, symtabEntryType inte
 }
 
 /**
- * Appends the passed `new_symbol` to the global symbol table.
+ * Appends the passed `append_new_symbol` to the global symbol table.
 **/
-void append_to_symbol_table(symtabEntry * new_symbol) {
+void append_to_symbol_table(symtabEntry * append_new_symbol) {
 	if (!theSymboltable) {
-		theSymboltable = new_symbol;
-		new_symbol->number = 0;
+		theSymboltable = append_new_symbol;
+		append_new_symbol->number = 0;
 	} else {
 		symtabEntry * current_symbol = theSymboltable;
 		while (current_symbol->next) {
 			current_symbol = current_symbol->next;
 		}
-		current_symbol->next = new_symbol;
-		new_symbol->number = current_symbol->number + 1;
+		current_symbol->next = append_new_symbol;
+		append_new_symbol->number = current_symbol->number + 1;
 	}
 }
 
