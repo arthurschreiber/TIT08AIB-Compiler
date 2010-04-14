@@ -24,7 +24,7 @@ typedef struct a_symtabEntry{
 } symtabEntry;
 
 void append_to_symbol_table(symtabEntry * new_symbol);
-symtabEntry * append_new_symbol(char *, symtabEntryType, symtabEntryType, int, int, int, int, symtabEntry *, int);
+symtabEntry * append_new_symbol(char *, symtabEntryType, symtabEntryType, int, int, symtabEntry *, int);
 
 symtabEntry * add_integer_param_symbol(char * name, int line, symtabEntry * parent, int parameter);
 symtabEntry * add_integer_symbol(char * name, int line, symtabEntry * parent);

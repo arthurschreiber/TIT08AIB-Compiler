@@ -92,7 +92,7 @@ symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 }
 
 symtabEntry * find_or_create_symbol(char * name, symtabEntryType type, symtabEntryType internType,
-		int offset, int line, int index1, int index2, symtabEntry * vater, int parameter) {
+		int offset, int line, symtabEntry * vater, int parameter) {
 
 	symtabEntry * symbol = find_symbol(name, vater);
 
@@ -100,7 +100,7 @@ symtabEntry * find_or_create_symbol(char * name, symtabEntryType type, symtabEnt
 		symbol->offset = offset;
 		symbol->line = line;
 	} else {
-		symbol = append_new_symbol(name, type, internType, offset, line, index1, index2, vater, parameter);
+		symbol = append_new_symbol(name, type, internType, offset, line, vater, parameter);
 	}
 
 	return symbol;
@@ -124,7 +124,7 @@ symtabEntry * new_symbol() {
 }
 
 symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
-		int offset, int line, int index1, int index2, symtabEntry * vater, int parameter) {
+		int offset, int line, symtabEntry * vater, int parameter) {
 
 	printf("Creating %s \n", name);
 
@@ -136,8 +136,6 @@ symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryTy
 	symbol->internType 	= internType;
 	symbol->offset 		= offset;
 	symbol->line 		= line;
-	symbol->index1 		= index1;
-	symbol->index2 		= index2;
 	symbol->vater 		= vater;
 	symbol->parameter 	= parameter;
 	symbol->next 		= 0;
@@ -165,11 +163,11 @@ void append_to_symbol_table(symtabEntry * append_new_symbol) {
 }
 
 symtabEntry * add_integer_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, parameter);
+	return find_or_create_symbol(name, INTEGER, NOP, 4, line, parent, parameter);
 }
 
 symtabEntry * add_integer_symbol(char * name, int line, symtabEntry * parent) {
-	return find_or_create_symbol(name, INTEGER, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, INTEGER, NOP, 4, line, parent, 0);
 }
 
 symtabEntry * add_variable_declaration(char * name, symtabEntryType type, int line, symtabEntry * parent) {
@@ -184,16 +182,16 @@ symtabEntry * add_variable_declaration(char * name, symtabEntryType type, int li
 }
 
 symtabEntry * add_real_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, parameter);
+	return find_or_create_symbol(name, REAL, NOP, 4, line, parent, parameter);
 }
 
 symtabEntry * add_real_symbol(char * name, int line, symtabEntry * parent) {
-	return find_or_create_symbol(name, REAL, NOP, 4, line, 0, 0, parent, 0);
+	return find_or_create_symbol(name, REAL, NOP, 4, line, parent, 0);
 }
 
 symtabEntry * add_function_symbol(char * name, symtabEntryType type, int line, int parameters, int body_offset) {
 	symtabEntryType function_type = (type == NOP) ? PROC : FUNC;
-	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, line, 0, 0, 0, parameters);
+	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, line, 0, parameters);
 }
 
 void yyerror(char * str) {
