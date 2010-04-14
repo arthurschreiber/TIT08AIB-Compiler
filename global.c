@@ -106,12 +106,29 @@ symtabEntry * find_or_create_symbol(char * name, symtabEntryType type, symtabEnt
 	return symbol;
 }
 
+symtabEntry * new_symbol() {
+	symtabEntry * symbol = (symtabEntry *) malloc(sizeof(symtabEntry));
+
+	symbol->name 		= strdup("");
+	symbol->type 		= NOP;
+	symbol->internType 	= NOP;
+	symbol->offset 		= 0;
+	symbol->line 		= 0;
+	symbol->index1 		= 0;
+	symbol->index2 		= 0;
+	symbol->vater 		= 0;
+	symbol->parameter 	= 0;
+	symbol->next 		= 0;
+
+	return symbol;
+}
+
 symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
 		int offset, int line, int index1, int index2, symtabEntry * vater, int parameter) {
 
 	printf("Creating %s \n", name);
 
-	symtabEntry * symbol = (symtabEntry *) malloc(sizeof(symtabEntry));
+	symtabEntry * symbol = new_symbol();
 
 	// allocates the memory for the new symtabEntry
 	symbol->name 		= strdup(name);
