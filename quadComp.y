@@ -41,12 +41,10 @@ programm
 function
     : var_type id '(' parameter_list ')' ';' {
 	    update_and_append_scope(scope, $2, $1, yyget_lineno(), $4);
-//    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, 0);
     	scope = new_symbol();
     }
     | var_type id '(' parameter_list ')' function_body {
     	update_and_append_scope(scope, $2, $1, yyget_lineno(), $4);
-//    	scope = add_function_symbol($2, $1, yyget_lineno(), $4, $6);
     	scope = new_symbol();
     }
     ;

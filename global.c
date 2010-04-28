@@ -194,7 +194,68 @@ symtabEntry * add_function_symbol(char * name, symtabEntryType type, int line, i
 	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, line, 0, parameters);
 }
 
+
+
+symtabEntry * find_parameter_symbol(symtabEntry * vater, int parameter_number) {
+	symtabEntry * current_symbol = theSymboltable;
+	if (current_symbol == NULL) return NULL;
+
+	do  {
+		if (current_symbol->vater == vater) {
+			if (current_symbol->parameter == parameter_number) {
+				return current_symbol;
+			}
+		}
+	} while (current_symbol->next && (current_symbol = current_symbol->next));
+
+	return NULL;
+}
+
+
+void delete_symbol(symtabEntry * symbol) {
+	symtabEntry * current_symbol = theSymboltable;
+	if (current_symbol == NULL) return;
+
+	do {
+		if (current_symbol == symbol) {
+			*current_symbol = *(current_symbol->next);
+			return;
+		}
+	} while ((current_symbol = current_symbol->next));
+}
+
 void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int line, int parameter_count) {
+	int i;
+
+	printf("Searching for existing entries of %s\n", name);
+	symtabEntry * existing = find_symbol(name, 0);
+
+	if (existing != NULL) {
+		if (parameter_count != existing->parameter) {
+			yyerror("Parameter count not matched.\n");
+		} else {
+			for (i = 0; i < parameter_count; ++i) {
+				printf("-- Searching for parameter %i\n", i + 1);
+				symtabEntry * param1 = find_parameter_symbol(scope, i + 1);
+				symtabEntry * param2 = find_parameter_symbol(existing, i + 1);
+
+				if (param1->type != param2->type) {
+					yyerror("Parameters of prototype do not match actual function definition in `__test__`\n");
+				}
+			}
+		}
+
+		for (i = 0; i < existing->parameter; ++i) {
+			delete_symbol(find_parameter_symbol(existing, i + 1));
+		}
+		delete_symbol(find_symbol(name, 0));
+
+		printf("Found \n");
+	} else {
+		printf("Found none\n");
+	}
+
+
 	scope->name      = strdup(name);
 	scope->line      = line;
 	scope->type      = type;
