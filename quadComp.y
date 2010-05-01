@@ -40,11 +40,11 @@ programm
 
 function
     : var_type id '(' parameter_list ')' ';' {
-	    update_and_append_scope(scope, $2, $1, yyget_lineno(), $4);
+	    update_and_append_scope(scope, $2, $1, $4);
     	scope = new_symbol();
     }
     | var_type id '(' parameter_list ')' function_body {
-    	update_and_append_scope(scope, $2, $1, yyget_lineno(), $4);
+    	update_and_append_scope(scope, $2, $1, $4);
     	scope = new_symbol();
     }
     ;
@@ -61,16 +61,16 @@ declaration_list
     ;
 
 declaration
-    : INT id { $$ = INTEGER; add_variable_declaration($2, INTEGER, yyget_lineno(), scope); }
-    | FLOAT id { $$ = REAL; add_variable_declaration($2, REAL, yyget_lineno(), scope); }
-    | declaration ',' id { $$ = $1; add_variable_declaration($3, $1, yyget_lineno(), scope); }
+    : INT id { $$ = INTEGER; add_variable_declaration($2, INTEGER, scope); }
+    | FLOAT id { $$ = REAL; add_variable_declaration($2, REAL, scope); }
+    | declaration ',' id { $$ = $1; add_variable_declaration($3, $1, scope); }
     ;
 
 parameter_list
-    : INT id { $$ = 1; add_integer_param_symbol($2, yyget_lineno(), scope, $$); }
-    | FLOAT id { $$ = 1; add_real_param_symbol($2, yyget_lineno(), scope, $$); }
-    | parameter_list ',' INT id { $$ = $1 + 1; add_integer_param_symbol($4, yyget_lineno(), scope, $$); }
-    | parameter_list ',' FLOAT id { $$ = $1 + 1; add_integer_param_symbol($4, yyget_lineno(), scope, $$); }
+    : INT id { $$ = 1; add_integer_param_symbol($2, scope, $$); }
+    | FLOAT id { $$ = 1; add_real_param_symbol($2, scope, $$); }
+    | parameter_list ',' INT id { $$ = $1 + 1; add_integer_param_symbol($4, scope, $$); }
+    | parameter_list ',' FLOAT id { $$ = $1 + 1; add_integer_param_symbol($4, scope, $$); }
     | VOID { $$ = 0; }
     |      { $$ = 0; }         
     ;

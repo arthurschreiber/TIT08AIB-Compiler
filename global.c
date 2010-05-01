@@ -92,15 +92,14 @@ symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 }
 
 symtabEntry * find_or_create_symbol(char * name, symtabEntryType type, symtabEntryType internType,
-		int offset, int line, symtabEntry * vater, int parameter) {
+		int offset, symtabEntry * vater, int parameter) {
 
 	symtabEntry * symbol = find_symbol(name, vater);
 
 	if (symbol != NULL) {
 		symbol->offset = offset;
-		symbol->line = line;
 	} else {
-		symbol = append_new_symbol(name, type, internType, offset, line, vater, parameter);
+		symbol = append_new_symbol(name, type, internType, offset, vater, parameter);
 	}
 
 	return symbol;
@@ -124,7 +123,7 @@ symtabEntry * new_symbol() {
 }
 
 symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
-		int offset, int line, symtabEntry * vater, int parameter) {
+		int offset, symtabEntry * vater, int parameter) {
 
 	printf("Creating %s \n", name);
 
@@ -135,7 +134,6 @@ symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryTy
 	symbol->type 		= type;
 	symbol->internType 	= internType;
 	symbol->offset 		= offset;
-	symbol->line 		= line;
 	symbol->vater 		= vater;
 	symbol->parameter 	= parameter;
 	symbol->next 		= 0;
@@ -162,36 +160,36 @@ void append_to_symbol_table(symtabEntry * append_new_symbol) {
 	}
 }
 
-symtabEntry * add_integer_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, INTEGER, NOP, 4, line, parent, parameter);
+symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int parameter) {
+	return find_or_create_symbol(name, INTEGER, NOP, 4, parent, parameter);
 }
 
-symtabEntry * add_integer_symbol(char * name, int line, symtabEntry * parent) {
-	return find_or_create_symbol(name, INTEGER, NOP, 4, line, parent, 0);
+symtabEntry * add_integer_symbol(char * name, symtabEntry * parent) {
+	return find_or_create_symbol(name, INTEGER, NOP, 4, parent, 0);
 }
 
-symtabEntry * add_variable_declaration(char * name, symtabEntryType type, int line, symtabEntry * parent) {
+symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtabEntry * parent) {
 	switch (type) {
 		case INTEGER:
-			return add_integer_symbol(name, line, parent);
+			return add_integer_symbol(name, parent);
 		case REAL:
-			return add_real_symbol(name, line, parent);
+			return add_real_symbol(name, parent);
 		default:
 			return NULL;
 	}
 }
 
-symtabEntry * add_real_param_symbol(char * name, int line, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, REAL, NOP, 4, line, parent, parameter);
+symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int parameter) {
+	return find_or_create_symbol(name, REAL, NOP, 4, parent, parameter);
 }
 
-symtabEntry * add_real_symbol(char * name, int line, symtabEntry * parent) {
-	return find_or_create_symbol(name, REAL, NOP, 4, line, parent, 0);
+symtabEntry * add_real_symbol(char * name, symtabEntry * parent) {
+	return find_or_create_symbol(name, REAL, NOP, 4, parent, 0);
 }
 
-symtabEntry * add_function_symbol(char * name, symtabEntryType type, int line, int parameters, int body_offset) {
+symtabEntry * add_function_symbol(char * name, symtabEntryType type, int parameters, int body_offset) {
 	symtabEntryType function_type = (type == NOP) ? PROC : FUNC;
-	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, line, 0, parameters);
+	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, 0, parameters);
 }
 
 
@@ -224,7 +222,7 @@ void delete_symbol(symtabEntry * symbol) {
 	} while ((current_symbol = current_symbol->next));
 }
 
-void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int line, int parameter_count) {
+void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int parameter_count) {
 	int i;
 
 	printf("Searching for existing entries of %s\n", name);
@@ -257,7 +255,6 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 
 
 	scope->name      = strdup(name);
-	scope->line      = line;
 	scope->type      = type;
 	scope->parameter = parameter_count;
 
