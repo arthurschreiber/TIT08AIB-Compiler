@@ -270,7 +270,16 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 
 
 	scope->name      = strdup(name);
-	scope->type      = type;
+
+	if (strcmp(scope->name, "main") == 0) {
+		scope->type       = PROG;
+	} else if (type == NOP) {
+		scope->type       = PROC;
+	} else {
+		scope->type       = FUNC;
+		scope->internType = type;
+	}
+
 	scope->parameter = parameter_count;
 
     append_to_symbol_table(scope);
