@@ -139,6 +139,9 @@ void append_to_symbol_table(symtabEntry * append_new_symbol) {
 symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int parameter) {
     symtabEntry * symbol = new_symbol();
 
+    symbol->offset = parent->offset;
+    parent->offset += 4;
+
     symbol->name 		= strdup(name);
 	symbol->type 		= INTEGER;
 	symbol->vater 		= parent;
@@ -151,6 +154,9 @@ symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int pa
 
 symtabEntry * add_integer_symbol(char * name, symtabEntry * parent) {
     symtabEntry * symbol = new_symbol();
+
+    symbol->offset = parent->offset;
+    parent->offset += 4;
 
     symbol->name 		= strdup(name);
 	symbol->type 		= INTEGER;
@@ -174,7 +180,10 @@ symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtab
 
 symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int parameter) {
     symtabEntry * symbol = new_symbol();
-    
+
+    symbol->offset = parent->offset;
+    parent->offset += 8;
+
     symbol->name 		= strdup(name);
 	symbol->type 		= REAL;
 	symbol->vater 		= parent;
@@ -187,6 +196,9 @@ symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int param
 
 symtabEntry * add_real_symbol(char * name, symtabEntry * parent) {
     symtabEntry * symbol = new_symbol();
+
+    symbol->offset = parent->offset;
+    parent->offset += 8;
 
     symbol->name 		= strdup(name);
 	symbol->type 		= REAL;
