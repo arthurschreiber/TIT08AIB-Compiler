@@ -270,6 +270,9 @@ int yyparse(void);
 extern symtabEntry * scope;
 
 int main (void){
+	// Stop eclipse console from buffering output...
+	setvbuf(stdout, NULL, _IONBF, 0);
+
 	scope = new_symbol();
 
 	if ((yyin = fopen("./input.c", "r")) != 0) {
