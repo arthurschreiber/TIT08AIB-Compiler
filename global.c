@@ -91,20 +91,6 @@ symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 	return NULL;
 }
 
-symtabEntry * find_or_create_symbol(char * name, symtabEntryType type, symtabEntryType internType,
-		int offset, symtabEntry * vater, int parameter) {
-
-	symtabEntry * symbol = find_symbol(name, vater);
-
-	if (symbol != NULL) {
-		symbol->offset = offset;
-	} else {
-		symbol = append_new_symbol(name, type, internType, offset, vater, parameter);
-	}
-
-	return symbol;
-}
-
 symtabEntry * new_symbol() {
 	symtabEntry * symbol = (symtabEntry *) malloc(sizeof(symtabEntry));
 
@@ -136,27 +122,6 @@ void append_symbol(symtabEntry * symbol, symtabEntry * target) {
 	do {
 		symbol->number = (i += 1);
 	} while ((symbol = symbol->next));
-}
-
-symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
-		int offset, symtabEntry * vater, int parameter) {
-
-	printf("Creating %s \n", name);
-
-	symtabEntry * symbol = new_symbol();
-
-	// allocates the memory for the new symtabEntry
-	symbol->name 		= strdup(name);
-	symbol->type 		= type;
-	symbol->internType 	= internType;
-	symbol->offset 		= offset;
-	symbol->vater 		= vater;
-	symbol->parameter 	= parameter;
-	symbol->next 		= 0;
-
-	append_to_symbol_table(symbol);
-
-	return symbol;
 }
 
 /**
@@ -231,13 +196,6 @@ symtabEntry * add_real_symbol(char * name, symtabEntry * parent) {
 
     return symbol;
 }
-
-symtabEntry * add_function_symbol(char * name, symtabEntryType type, int parameters, int body_offset) {
-	symtabEntryType function_type = (type == NOP) ? PROC : FUNC;
-	return find_or_create_symbol(name, function_type, type, parameters * 4 + body_offset, 0, parameters);
-}
-
-
 
 symtabEntry * find_parameter_symbol(symtabEntry * vater, int parameter_number, symtabEntry * current_symbol) {
 	if (current_symbol == NULL) return NULL;
