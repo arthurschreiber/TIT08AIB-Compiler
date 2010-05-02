@@ -130,7 +130,12 @@ void append_symbol(symtabEntry * symbol, symtabEntry * target) {
 		target = target->next;
 	}
 	target->next = symbol;
-	symbol->number = target->number + 1;
+
+	int i = target->number;
+
+	do {
+		symbol->number = (i += 1);
+	} while ((symbol = symbol->next));
 }
 
 symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
@@ -167,11 +172,28 @@ void append_to_symbol_table(symtabEntry * append_new_symbol) {
 }
 
 symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, INTEGER, NOP, 4, parent, parameter);
+    symtabEntry * symbol = new_symbol();
+
+    symbol->name 		= strdup(name);
+	symbol->type 		= INTEGER;
+	symbol->vater 		= parent;
+	symbol->parameter 	= parameter;
+
+    append_symbol(symbol, parent);
+
+    return symbol;
 }
 
 symtabEntry * add_integer_symbol(char * name, symtabEntry * parent) {
-	return find_or_create_symbol(name, INTEGER, NOP, 4, parent, 0);
+    symtabEntry * symbol = new_symbol();
+
+    symbol->name 		= strdup(name);
+	symbol->type 		= INTEGER;
+	symbol->vater 		= parent;
+
+    append_symbol(symbol, parent);
+
+    return symbol;
 }
 
 symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtabEntry * parent) {
@@ -186,11 +208,28 @@ symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtab
 }
 
 symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int parameter) {
-	return find_or_create_symbol(name, REAL, NOP, 4, parent, parameter);
+    symtabEntry * symbol = new_symbol();
+    
+    symbol->name 		= strdup(name);
+	symbol->type 		= REAL;
+	symbol->vater 		= parent;
+	symbol->parameter 	= parameter;
+
+    append_symbol(symbol, parent);
+    
+    return symbol;
 }
 
 symtabEntry * add_real_symbol(char * name, symtabEntry * parent) {
-	return find_or_create_symbol(name, REAL, NOP, 4, parent, 0);
+    symtabEntry * symbol = new_symbol();
+
+    symbol->name 		= strdup(name);
+	symbol->type 		= REAL;
+	symbol->vater 		= parent;
+
+    append_symbol(symbol, parent);
+
+    return symbol;
 }
 
 symtabEntry * add_function_symbol(char * name, symtabEntryType type, int parameters, int body_offset) {
@@ -200,8 +239,7 @@ symtabEntry * add_function_symbol(char * name, symtabEntryType type, int paramet
 
 
 
-symtabEntry * find_parameter_symbol(symtabEntry * vater, int parameter_number) {
-	symtabEntry * current_symbol = theSymboltable;
+symtabEntry * find_parameter_symbol(symtabEntry * vater, int parameter_number, symtabEntry * current_symbol) {
 	if (current_symbol == NULL) return NULL;
 
 	do  {
@@ -255,7 +293,7 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 		}
 
 		for (i = 0; i < existing->parameter; ++i) {
-			delete_symbol(find_parameter_symbol(existing, i + 1));
+			delete_symbol(find_parameter_symbol(existing, i + 1, theSymboltable));
 		}
 		delete_symbol(find_symbol(name, 0));
 
