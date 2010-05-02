@@ -216,12 +216,20 @@ void delete_symbol(symtabEntry * symbol) {
 	symtabEntry * current_symbol = theSymboltable;
 	if (current_symbol == NULL) return;
 
-	do {
-		if (current_symbol == symbol) {
-			*current_symbol = *(current_symbol->next);
-			return;
+	if (current_symbol == symbol) {
+		theSymboltable = symbol->next;
+	}
+
+	while (current_symbol) {
+		if (current_symbol->next == symbol) {
+			current_symbol->next = symbol->next;
 		}
-	} while ((current_symbol = current_symbol->next));
+
+		if (current_symbol->number >= symbol->number) {
+			current_symbol->number--;
+		}
+		current_symbol = current_symbol->next;
+	}
 }
 
 void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int parameter_count) {
