@@ -240,10 +240,15 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 		} else {
 			for (i = 0; i < parameter_count; ++i) {
 				printf("-- Searching for parameter %i\n", i + 1);
-				symtabEntry * param1 = find_parameter_symbol(scope, i + 1);
-				symtabEntry * param2 = find_parameter_symbol(existing, i + 1);
 
-				if (param1->type != param2->type) {
+				symtabEntry * param1 = find_parameter_symbol(scope, i + 1, scope);
+				symtabEntry * param2 = find_parameter_symbol(existing, i + 1, theSymboltable);
+
+				if (param1 == NULL) {
+					yyerror("Could not find the parameter in the current scope");
+				} else if (param2 == NULL) {
+					yyerror("Could not find the parameter in the existing symbol table");
+				} else if (param1->type != param2->type) {
 					yyerror("Parameters of prototype do not match actual function definition in `__test__`\n");
 				}
 			}
