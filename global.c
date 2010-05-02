@@ -122,17 +122,6 @@ symtabEntry * new_symbol() {
 	return symbol;
 }
 
-/**
- *  Hängt `symbol` an das Ende von `target`.
-**/
-void append_symbol(symtabEntry * symbol, symtabEntry * target) {
-	while (target->next) {
-		target = target->next;
-	}
-	target->next = symbol;
-	symbol->number = target->number + 1;
-}
-
 symtabEntry * append_new_symbol(char * name, symtabEntryType type, symtabEntryType internType,
 		int offset, symtabEntry * vater, int parameter) {
 
@@ -162,21 +151,17 @@ void append_to_symbol_table(symtabEntry * append_new_symbol) {
 		theSymboltable = append_new_symbol;
 		append_new_symbol->number = 0;
 	} else {
-        append_symbol(append_new_symbol, theSymboltable);
+		symtabEntry * current_symbol = theSymboltable;
+		while (current_symbol->next) {
+			current_symbol = current_symbol->next;
+		}
+		current_symbol->next = append_new_symbol;
+		append_new_symbol->number = current_symbol->number + 1;
 	}
 }
 
 symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int parameter) {
-    symtabEntry * symbol = new_symbol();
-    
-    symbol->name 		= strdup(name);
-	symbol->type 		= INTEGER;
-	symbol->vater 		= parent;
-	symbol->parameter 	= parameter;
-
-    append_symbol(symbol, parent);
-    
-    return symbol;
+	return find_or_create_symbol(name, INTEGER, NOP, 4, parent, parameter);
 }
 
 symtabEntry * add_integer_symbol(char * name, symtabEntry * parent) {
