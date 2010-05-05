@@ -159,6 +159,16 @@ void append_symbol(symtabEntry * symbol, symtabEntry * target) {
 	} while ((symbol = symbol->next));
 }
 
+int unique_helper_id = 1;
+symtabEntry * new_helper_symbol(symtabEntry * scope) {
+	symtabEntry * symbol = new_symbol();
+
+	symbol->name = (char *) malloc(sizeof(char) * 10);
+	sprintf(symbol->name, "H%i", unique_helper_id++);
+	append_symbol(symbol, scope);
+	return symbol;
+}
+
 /**
  * Appends the passed `append_new_symbol` to the global symbol table.
 **/

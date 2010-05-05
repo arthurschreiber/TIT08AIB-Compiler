@@ -47,6 +47,7 @@ typedef struct a_quadruple {
 
 exp * new_exp();
 exp * new_exp_constant(char * constant);
+symtabEntry * new_helper_symbol(symtabEntry * scope);
 quadruple * new_quadruple();
 symtabEntry * find_symbol_in_scope(char * name, symtabEntry * scope);
 
