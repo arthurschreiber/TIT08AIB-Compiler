@@ -247,7 +247,6 @@ void delete_symbol(symtabEntry * symbol) {
 void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int parameter_count) {
 	int i;
 
-	printf("Searching for existing entries of %s\n", name);
 	symtabEntry * existing = find_symbol(name, 0);
 
 	if (existing != NULL) {
@@ -255,8 +254,6 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 			yyerror("Parameter count not matched.\n");
 		} else {
 			for (i = 0; i < parameter_count; ++i) {
-				printf("-- Searching for parameter %i\n", i + 1);
-
 				symtabEntry * param1 = find_parameter_symbol(scope, i + 1, scope);
 				symtabEntry * param2 = find_parameter_symbol(existing, i + 1, theSymboltable);
 
@@ -274,12 +271,7 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 			delete_symbol(find_parameter_symbol(existing, i + 1, theSymboltable));
 		}
 		delete_symbol(find_symbol(name, 0));
-
-		printf("Found \n");
-	} else {
-		printf("Found none\n");
 	}
-
 
 	scope->name      = strdup(name);
 
