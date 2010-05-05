@@ -104,6 +104,7 @@ symtabEntry * new_symbol() {
 	symbol->vater 		= 0;
 	symbol->parameter 	= 0;
 	symbol->next 		= 0;
+	symbol->number		= 0;
 
 	return symbol;
 }
@@ -130,7 +131,6 @@ void append_symbol(symtabEntry * symbol, symtabEntry * target) {
 void append_to_symbol_table(symtabEntry * append_new_symbol) {
 	if (!theSymboltable) {
 		theSymboltable = append_new_symbol;
-		append_new_symbol->number = 0;
 	} else {
         append_symbol(append_new_symbol, theSymboltable);
 	}
