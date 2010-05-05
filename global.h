@@ -23,6 +23,17 @@ typedef struct a_symtabEntry{
 	struct a_symtabEntry * next;
 } symtabEntry;
 
+typedef enum a_exp_type {
+	EXP_INT, EXP_FLOAT, EXP_SYMBOL
+} exp_type;
+
+typedef struct a_exp {
+	symtabEntry * symbol;
+	exp_type type;
+	int int_value;
+	float float_value;
+} exp;
+
 void append_to_symbol_table(symtabEntry * new_symbol);
 symtabEntry * new_symbol();
 
@@ -39,6 +50,10 @@ symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtab
 symtabEntry * add_function_symbol(char * name, symtabEntryType type, int parameters, int body_offsets);
 
 void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int parameter_count);
+
+
+
+void genquad(char * quad_code);
 
 void getSymbolTypePrintout(symtabEntryType type, char * writeIn);
 void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile);
