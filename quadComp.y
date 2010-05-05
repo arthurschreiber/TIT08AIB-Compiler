@@ -13,15 +13,17 @@ symtabEntry * scope;
 	int number;
 	char * string;
 	symtabEntryType type;
+	exp * exp;
 }
 
 %token INT FLOAT VOID INC_OP DEC_OP LOG_AND LOG_OR NOT_EQUAL EQUAL
 %token GREATER_OR_EQUAL LESS_OR_EQUAL SHIFTLEFT U_PLUS U_MINUS CONSTANT
 %token IDENTIFIER IF ELSE DO WHILE RETURN
 
-%type<string> IDENTIFIER id
+%type<string> IDENTIFIER id CONSTANT
 %type<number> declaration_list declaration parameter_list function_body
 %type<type> var_type
+%type<exp> expression
 
 %left LOG_AND LOG_OR
 %left LESS_OR_EQUAL GREATER_OR_EQUAL NOT_EQUAL EQUAL '<' '>'
@@ -113,7 +115,18 @@ unmatched_statement
 
 assignment
     : expression                 
-    | id '='          expression 
+    | id '='          expression {
+    	quadruple * quad = new_quadruple();
+    	quad->type = Q_ASSIGNMENT;
+    	quad->symbol = find_symbol_in_scope($1, scope);
+		quad->operand_1 = $3->value;
+    
+    	if ($3->type == EXP_INT || $3->type == EXP_FLOAT) {
+			printf("%s := %s\n", quad->symbol->name, quad->operand_1);
+    	} else if ($3->type == EXP_SYMBOL) {
+    		puts("-- Assigning symbol");
+    	}
+    }
     ;
 
 expression
@@ -136,7 +149,7 @@ expression
     | '!' expression                           
     | '+' expression %prec U_PLUS              
     | '-' expression %prec U_MINUS             
-    | CONSTANT                                 
+    | CONSTANT                                  { $$ = new_exp_constant($1); }
     | '(' expression ')'                       
     | id '(' exp_list ')'                      
     | id '('  ')'                              

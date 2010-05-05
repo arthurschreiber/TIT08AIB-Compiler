@@ -76,6 +76,19 @@ void getSymbolTypePrintout(symtabEntryType  type, char * writeIn){
 	}
 }
 
+symtabEntry * find_symbol_in_scope(char * name, symtabEntry * scope) {
+	symtabEntry * current_symbol = scope;
+	if (current_symbol == NULL) return NULL;
+
+	do  {
+		if (strcmp(current_symbol->name, name) == 0) {
+			return current_symbol;
+		}
+	} while (current_symbol->next && (current_symbol = current_symbol->next));
+
+	return NULL;
+}
+
 symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 	symtabEntry * current_symbol = theSymboltable;
 	if (current_symbol == NULL) return NULL;
@@ -89,6 +102,23 @@ symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 	} while (current_symbol->next && (current_symbol = current_symbol->next));
 
 	return NULL;
+}
+
+exp * new_exp_constant(char * constant) {
+	exp * expression = (exp *) malloc(sizeof(exp));
+	expression->value = constant;
+
+	if (strchr(constant, '.') != NULL) {
+		expression->type = EXP_FLOAT;
+	} else {
+		expression->type = EXP_INT;
+	}
+
+	return expression;
+}
+
+quadruple * new_quadruple() {
+	return (quadruple *) malloc(sizeof(quadruple));
 }
 
 symtabEntry * new_symbol() {

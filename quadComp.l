@@ -37,7 +37,7 @@ do     { return DO; }
 while  { return WHILE; }
 return { return RETURN; }
 
-(([1-9][0-9]*)|0)(\.[0-9]+)? { return CONSTANT; }
+(([1-9][0-9]*)|0)(\.[0-9]+)? { yylval.string = strdup(yytext); return CONSTANT; }
 [a-z_A-Z][a-zA-Z_0-9]* { yylval.string = strdup(yytext); return IDENTIFIER; }
 
 (\/\*(.*)\*\/)|\/\/(.*) { /* COMMENTS */ }

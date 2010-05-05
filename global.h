@@ -33,6 +33,22 @@ typedef struct a_exp {
 	char * value;
 } exp;
 
+typedef enum a_quad_type {
+	Q_ASSIGNMENT
+} quad_type;
+
+typedef struct a_quadruple {
+	quad_type type;
+	char * operand_1;
+	char * operand_2;
+	char * operation;
+	symtabEntry * symbol;
+} quadruple;
+
+exp * new_exp_constant(char * constant);
+quadruple * new_quadruple();
+symtabEntry * find_symbol_in_scope(char * name, symtabEntry * scope);
+
 void append_to_symbol_table(symtabEntry * new_symbol);
 symtabEntry * new_symbol();
 
