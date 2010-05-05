@@ -116,35 +116,81 @@ unmatched_statement
 assignment
     : expression                 
     | id '='          expression {
-    	quadruple * quad = new_quadruple();
-    	quad->type = Q_ASSIGNMENT;
-    	quad->symbol = find_symbol_in_scope($1, scope);
-		quad->operand_1 = $3->value;
-    
     	if ($3->type == EXP_INT || $3->type == EXP_FLOAT) {
-			printf("%s := %s\n", quad->symbol->name, quad->operand_1);
+			printf("Genquad: %s := %s\n", $1, $3->value);
     	} else if ($3->type == EXP_SYMBOL) {
-    		puts("-- Assigning symbol");
+	    	printf("Genquad: %s := %s\n", $1, $3->value);
     	}
     }
     ;
 
 expression
-    : INC_OP expression                        
-    | DEC_OP expression                        
+    : INC_OP expression                        {
+		printf("Genquad: %s := %s + 1\n", $2->value, $2->value);
+		$$ = $2;
+	} 
+    | DEC_OP expression                        {
+		printf("Genquad: %s := %s - 1\n", $2->value, $2->value);
+		$$ = $2;
+	} 
     | expression LOG_OR           expression   
-    | expression LOG_AND          expression   
+    | expression LOG_AND          expression
     | expression NOT_EQUAL        expression   
     | expression EQUAL            expression   
     | expression GREATER_OR_EQUAL expression   
     | expression LESS_OR_EQUAL    expression   
     | expression '>'              expression   
     | expression '<'              expression   
-    | expression SHIFTLEFT        expression   
-    | expression '+'              expression   
-    | expression '-'              expression   
-    | expression '*'              expression   
-    | expression '/'              expression   
+    | expression SHIFTLEFT        expression     {
+		symtabEntry * sym = new_helper_symbol(scope);
+		sym->type = INTEGER;
+		
+		printf("Genquad: %s := %s << %s\n", sym->name, $1->value, $3->value);
+		
+		$$ = new_exp();
+		$$->type = EXP_SYMBOL;
+		$$->value = sym->name;
+    } 
+    | expression '+'              expression {
+		symtabEntry * sym = new_helper_symbol(scope);
+		sym->type = INTEGER;
+		
+		printf("Genquad: %s := %s + %s\n", sym->name, $1->value, $3->value);
+		
+		$$ = new_exp();
+		$$->type = EXP_SYMBOL;
+		$$->value = sym->name;
+    } 
+    | expression '-'              expression   {
+		symtabEntry * sym = new_helper_symbol(scope);
+		sym->type = INTEGER;
+		
+		printf("Genquad: %s := %s - %s\n", sym->name, $1->value, $3->value);
+		
+		$$ = new_exp();
+		$$->type = EXP_SYMBOL;
+		$$->value = sym->name;
+    } 
+    | expression '*'              expression   {
+		symtabEntry * sym = new_helper_symbol(scope);
+		sym->type = INTEGER;
+		
+		printf("Genquad: %s := %s * %s\n", sym->name, $1->value, $3->value);
+		
+		$$ = new_exp();
+		$$->type = EXP_SYMBOL;
+		$$->value = sym->name;
+    } 
+    | expression '/'              expression   {
+		symtabEntry * sym = new_helper_symbol(scope);
+		sym->type = INTEGER;
+		
+		printf("Genquad: %s := %s / %s\n", sym->name, $1->value, $3->value);
+		
+		$$ = new_exp();
+		$$->type = EXP_SYMBOL;
+		$$->value = sym->name;
+    } 
     | expression '%'              expression   
     | '!' expression                           
     | '+' expression %prec U_PLUS              
@@ -153,7 +199,11 @@ expression
     | '(' expression ')'                       
     | id '(' exp_list ')'                      
     | id '('  ')'                              
-    | id
+    | id 										{
+    	$$ = new_exp();
+    	$$->type = EXP_SYMBOL;
+    	$$->value = $1;
+    }
     ;
 
 exp_list
