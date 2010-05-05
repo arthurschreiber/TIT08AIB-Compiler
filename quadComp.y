@@ -63,9 +63,9 @@ declaration_list
     ;
 
 declaration
-    : INT id { $$ = INTEGER; add_variable_declaration($2, INTEGER, scope); }
-    | FLOAT id { $$ = REAL; add_variable_declaration($2, REAL, scope); }
-    | declaration ',' id { $$ = $1; add_variable_declaration($3, $1, scope); }
+    : INT id { $$ = INTEGER; new_variable($2, INTEGER, scope); }
+    | FLOAT id { $$ = REAL; new_variable($2, REAL, scope); }
+    | declaration ',' id { $$ = $1; new_variable($3, $1, scope); }
     ;
 
 parameter_list

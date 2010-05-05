@@ -209,29 +209,10 @@ symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int pa
  	return symbol;
 }
 
-symtabEntry * add_integer_symbol(char * name, symtabEntry * parent) {
-	return new_variable(name, INTEGER, parent);
-}
-
-symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtabEntry * parent) {
-	switch (type) {
-		case INTEGER:
-			return add_integer_symbol(name, parent);
-		case REAL:
-			return add_real_symbol(name, parent);
-		default:
-			return NULL;
-	}
-}
-
 symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int parameter) {
     symtabEntry * symbol = new_variable(name, REAL, parent);
  	symbol->parameter 	= parameter;
  	return symbol;
-}
-
-symtabEntry * add_real_symbol(char * name, symtabEntry * parent) {
-	return new_variable(name, REAL, parent);
 }
 
 symtabEntry * find_parameter_symbol(symtabEntry * vater, int parameter_number, symtabEntry * current_symbol) {
