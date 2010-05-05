@@ -59,9 +59,6 @@ symtabEntry * new_symbol();
 
 symtabEntry * append_new_symbol(char *, symtabEntryType, symtabEntryType, int, symtabEntry *, int);
 
-symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int parameter);
-symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int parameter);
-
 void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int parameter_count);
 
 

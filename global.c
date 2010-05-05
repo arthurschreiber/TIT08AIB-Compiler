@@ -185,6 +185,12 @@ symtabEntry * new_variable(char * name, symtabEntryType type, symtabEntry * scop
     return symbol;
 }
 
+symtabEntry * new_param_variable(char * name, symtabEntryType type, symtabEntry * scope, int parameter) {
+    symtabEntry * symbol = new_variable(name, type, scope);
+ 	symbol->parameter = parameter;
+ 	return symbol;
+}
+
 int unique_helper_id = 1;
 symtabEntry * new_helper_variable(symtabEntryType type, symtabEntry * scope) {
 	char * name = (char *) malloc(sizeof(char) * 10);
@@ -201,18 +207,6 @@ void append_to_symbol_table(symtabEntry * append_new_symbol) {
 	} else {
         append_symbol(append_new_symbol, theSymboltable);
 	}
-}
-
-symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int parameter) {
-    symtabEntry * symbol = new_variable(name, INTEGER, parent);
- 	symbol->parameter 	= parameter;
- 	return symbol;
-}
-
-symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int parameter) {
-    symtabEntry * symbol = new_variable(name, REAL, parent);
- 	symbol->parameter 	= parameter;
- 	return symbol;
 }
 
 symtabEntry * find_parameter_symbol(symtabEntry * vater, int parameter_number, symtabEntry * current_symbol) {

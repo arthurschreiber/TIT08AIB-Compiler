@@ -69,12 +69,12 @@ declaration
     ;
 
 parameter_list
-    : INT id { $$ = 1; add_integer_param_symbol($2, scope, $$); }
-    | FLOAT id { $$ = 1; add_real_param_symbol($2, scope, $$); }
-    | parameter_list ',' INT id { $$ = $1 + 1; add_integer_param_symbol($4, scope, $$); }
-    | parameter_list ',' FLOAT id { $$ = $1 + 1; add_integer_param_symbol($4, scope, $$); }
+    : INT id { $$ = 1; new_param_variable($2, INTEGER, scope, $$); }
+    | FLOAT id { $$ = 1; new_param_variable($2, REAL, scope, $$); }
+    | parameter_list ',' INT id { $$ = $1 + 1; new_param_variable($4, INTEGER, scope, $$); }
+    | parameter_list ',' FLOAT id { $$ = $1 + 1; new_param_variable($4, REAL, scope, $$); }
     | VOID { $$ = 0; }
-    |      { $$ = 0; }         
+    |      { $$ = 0; }
     ;
 
 var_type
