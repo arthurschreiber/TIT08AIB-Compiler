@@ -30,8 +30,7 @@ typedef enum a_exp_type {
 typedef struct a_exp {
 	symtabEntry * symbol;
 	exp_type type;
-	int int_value;
-	float float_value;
+	char * value;
 } exp;
 
 void append_to_symbol_table(symtabEntry * new_symbol);
