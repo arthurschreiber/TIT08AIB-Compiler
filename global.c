@@ -108,6 +108,13 @@ exp * new_exp() {
 	return (exp *) malloc(sizeof(exp));
 }
 
+exp * new_exp_symbol(char * name) {
+	exp * expression = new_exp();
+	expression->value = name;
+	expression->type = EXP_SYMBOL;
+	return expression;
+}
+
 exp * new_exp_constant(char * constant) {
 	exp * expression = new_exp();
 	expression->value = constant;

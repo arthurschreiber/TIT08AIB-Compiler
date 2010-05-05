@@ -147,9 +147,7 @@ expression
 		
 		printf("Genquad: %s := %s << %s\n", sym->name, $1->value, $3->value);
 		
-		$$ = new_exp();
-		$$->type = EXP_SYMBOL;
-		$$->value = sym->name;
+		$$ = new_exp_symbol(sym->name);
     } 
     | expression '+'              expression {
 		symtabEntry * sym = new_helper_symbol(scope);
@@ -157,9 +155,7 @@ expression
 		
 		printf("Genquad: %s := %s + %s\n", sym->name, $1->value, $3->value);
 		
-		$$ = new_exp();
-		$$->type = EXP_SYMBOL;
-		$$->value = sym->name;
+		$$ = new_exp_symbol(sym->name);
     } 
     | expression '-'              expression   {
 		symtabEntry * sym = new_helper_symbol(scope);
@@ -167,9 +163,7 @@ expression
 		
 		printf("Genquad: %s := %s - %s\n", sym->name, $1->value, $3->value);
 		
-		$$ = new_exp();
-		$$->type = EXP_SYMBOL;
-		$$->value = sym->name;
+		$$ = new_exp_symbol(sym->name);
     } 
     | expression '*'              expression   {
 		symtabEntry * sym = new_helper_symbol(scope);
@@ -177,9 +171,7 @@ expression
 		
 		printf("Genquad: %s := %s * %s\n", sym->name, $1->value, $3->value);
 		
-		$$ = new_exp();
-		$$->type = EXP_SYMBOL;
-		$$->value = sym->name;
+		$$ = new_exp_symbol(sym->name);
     } 
     | expression '/'              expression   {
 		symtabEntry * sym = new_helper_symbol(scope);
@@ -187,9 +179,7 @@ expression
 		
 		printf("Genquad: %s := %s / %s\n", sym->name, $1->value, $3->value);
 		
-		$$ = new_exp();
-		$$->type = EXP_SYMBOL;
-		$$->value = sym->name;
+		$$ = new_exp_symbol(sym->name);
     } 
     | expression '%'              expression   
     | '!' expression                           
@@ -199,11 +189,7 @@ expression
     | '(' expression ')'                       
     | id '(' exp_list ')'                      
     | id '('  ')'                              
-    | id 										{
-    	$$ = new_exp();
-    	$$->type = EXP_SYMBOL;
-    	$$->value = $1;
-    }
+    | id 										{ $$ = new_exp_symbol($1); }
     ;
 
 exp_list
