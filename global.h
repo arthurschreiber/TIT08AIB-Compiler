@@ -67,8 +67,6 @@ symtabEntry * add_real_symbol(char * name, symtabEntry * parent);
 
 symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtabEntry * parent);
 
-symtabEntry * add_function_symbol(char * name, symtabEntryType type, int parameters, int body_offsets);
-
 void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int parameter_count);
 
 
