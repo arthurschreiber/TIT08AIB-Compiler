@@ -142,40 +142,35 @@ expression
     | expression '>'              expression   
     | expression '<'              expression   
     | expression SHIFTLEFT        expression     {
-		symtabEntry * sym = new_helper_symbol(scope);
-		sym->type = INTEGER;
+		symtabEntry * sym = new_helper_variable(INTEGER, scope);
 		
 		printf("Genquad: %s := %s << %s\n", sym->name, $1->value, $3->value);
 		
 		$$ = new_exp_symbol(sym->name);
     } 
     | expression '+'              expression {
-		symtabEntry * sym = new_helper_symbol(scope);
-		sym->type = INTEGER;
+		symtabEntry * sym = new_helper_variable(INTEGER, scope);
 		
 		printf("Genquad: %s := %s + %s\n", sym->name, $1->value, $3->value);
 		
 		$$ = new_exp_symbol(sym->name);
     } 
     | expression '-'              expression   {
-		symtabEntry * sym = new_helper_symbol(scope);
-		sym->type = INTEGER;
+		symtabEntry * sym = new_helper_variable(INTEGER, scope);
 		
 		printf("Genquad: %s := %s - %s\n", sym->name, $1->value, $3->value);
 		
 		$$ = new_exp_symbol(sym->name);
     } 
     | expression '*'              expression   {
-		symtabEntry * sym = new_helper_symbol(scope);
-		sym->type = INTEGER;
+		symtabEntry * sym = new_helper_variable(INTEGER, scope);
 		
 		printf("Genquad: %s := %s * %s\n", sym->name, $1->value, $3->value);
 		
 		$$ = new_exp_symbol(sym->name);
     } 
     | expression '/'              expression   {
-		symtabEntry * sym = new_helper_symbol(scope);
-		sym->type = INTEGER;
+		symtabEntry * sym = new_helper_variable(INTEGER, scope);
 		
 		printf("Genquad: %s := %s / %s\n", sym->name, $1->value, $3->value);
 		

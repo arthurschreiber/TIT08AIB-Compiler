@@ -166,14 +166,30 @@ void append_symbol(symtabEntry * symbol, symtabEntry * target) {
 	} while ((symbol = symbol->next));
 }
 
-int unique_helper_id = 1;
-symtabEntry * new_helper_symbol(symtabEntry * scope) {
-	symtabEntry * symbol = new_symbol();
+symtabEntry * new_variable(char * name, symtabEntryType type, symtabEntry * scope) {
+    symtabEntry * symbol = new_symbol();
 
-	symbol->name = (char *) malloc(sizeof(char) * 10);
-	sprintf(symbol->name, "H%i", unique_helper_id++);
-	append_symbol(symbol, scope);
-	return symbol;
+    symbol->name 		= strdup(name);
+    symbol->offset 		= scope->offset;
+    symbol->type 		= type;
+	symbol->vater 		= scope;
+
+    if (type == INTEGER) {
+        scope->offset += 4;
+    } else if (type == REAL) {
+        scope->offset += 8;
+    }
+
+    append_symbol(symbol, scope);
+
+    return symbol;
+}
+
+int unique_helper_id = 1;
+symtabEntry * new_helper_variable(symtabEntryType type, symtabEntry * scope) {
+	char * name = (char *) malloc(sizeof(char) * 10);
+	sprintf(name, "H%i", unique_helper_id++);
+	return new_variable(name, type, scope);
 }
 
 /**
