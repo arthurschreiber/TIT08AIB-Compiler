@@ -49,6 +49,8 @@ exp * new_exp();
 exp * new_exp_symbol(char * name);
 exp * new_exp_constant(char * constant);
 
+symtabEntry * new_variable(char * name, symtabEntryType type, symtabEntry * scope);
+symtabEntry * new_param_variable(char * name, symtabEntryType type, symtabEntry * scope, int parameter);
 symtabEntry * new_helper_variable(symtabEntryType type, symtabEntry * scope);
 
 quadruple * new_quadruple();
