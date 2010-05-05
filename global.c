@@ -104,8 +104,12 @@ symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 	return NULL;
 }
 
+exp * new_exp() {
+	return (exp *) malloc(sizeof(exp));
+}
+
 exp * new_exp_constant(char * constant) {
-	exp * expression = (exp *) malloc(sizeof(exp));
+	exp * expression = new_exp();
 	expression->value = constant;
 
 	if (strchr(constant, '.') != NULL) {
