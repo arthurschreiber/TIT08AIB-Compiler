@@ -204,34 +204,13 @@ void append_to_symbol_table(symtabEntry * append_new_symbol) {
 }
 
 symtabEntry * add_integer_param_symbol(char * name, symtabEntry * parent, int parameter) {
-    symtabEntry * symbol = new_symbol();
-
-    symbol->offset = parent->offset;
-    parent->offset += 4;
-
-    symbol->name 		= strdup(name);
-	symbol->type 		= INTEGER;
-	symbol->vater 		= parent;
-	symbol->parameter 	= parameter;
-
-    append_symbol(symbol, parent);
-
-    return symbol;
+    symtabEntry * symbol = new_variable(name, INTEGER, parent);
+ 	symbol->parameter 	= parameter;
+ 	return symbol;
 }
 
 symtabEntry * add_integer_symbol(char * name, symtabEntry * parent) {
-    symtabEntry * symbol = new_symbol();
-
-    symbol->offset = parent->offset;
-    parent->offset += 4;
-
-    symbol->name 		= strdup(name);
-	symbol->type 		= INTEGER;
-	symbol->vater 		= parent;
-
-    append_symbol(symbol, parent);
-
-    return symbol;
+	return new_variable(name, INTEGER, parent);
 }
 
 symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtabEntry * parent) {
@@ -246,34 +225,13 @@ symtabEntry * add_variable_declaration(char * name, symtabEntryType type, symtab
 }
 
 symtabEntry * add_real_param_symbol(char * name, symtabEntry * parent, int parameter) {
-    symtabEntry * symbol = new_symbol();
-
-    symbol->offset = parent->offset;
-    parent->offset += 8;
-
-    symbol->name 		= strdup(name);
-	symbol->type 		= REAL;
-	symbol->vater 		= parent;
-	symbol->parameter 	= parameter;
-
-    append_symbol(symbol, parent);
-    
-    return symbol;
+    symtabEntry * symbol = new_variable(name, REAL, parent);
+ 	symbol->parameter 	= parameter;
+ 	return symbol;
 }
 
 symtabEntry * add_real_symbol(char * name, symtabEntry * parent) {
-    symtabEntry * symbol = new_symbol();
-
-    symbol->offset = parent->offset;
-    parent->offset += 8;
-
-    symbol->name 		= strdup(name);
-	symbol->type 		= REAL;
-	symbol->vater 		= parent;
-
-    append_symbol(symbol, parent);
-
-    return symbol;
+	return new_variable(name, REAL, parent);
 }
 
 symtabEntry * find_parameter_symbol(symtabEntry * vater, int parameter_number, symtabEntry * current_symbol) {
