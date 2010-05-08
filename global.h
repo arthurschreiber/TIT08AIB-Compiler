@@ -26,8 +26,13 @@ typedef struct a_symtabEntry{
 typedef enum a_quad_type {
 	Q_NOP, Q_ASSIGNMENT, Q_INC, Q_DEC, Q_SHIFT,
 	Q_MULTIPLY, Q_DIVIDE, Q_MOD,
-	Q_PLUS, Q_MINUS
+	Q_PLUS, Q_MINUS,
+
+	Q_GREATER_OR_EQUAL, Q_LESS_OR_EQUAL,
+	Q_GOTO, Q_RETURN
 } quad_type;
+
+struct a_jump;
 
 typedef struct a_quadruple {
 	quad_type type;
@@ -35,9 +40,20 @@ typedef struct a_quadruple {
 	char * operand_2;
 	quad_type operator;
 	char * result;
+	int line;
+
+	struct a_jump * truelist;
+	struct a_jump * falselist;
+	struct a_jump * nextlist;
 
 	struct a_quadruple * next;
 } quadruple;
+
+typedef struct a_jump {
+	quadruple * quad;
+	struct a_jump * next;
+} jump;
+
 
 quadruple * new_quadruple();
 void compile_quadruplecode();

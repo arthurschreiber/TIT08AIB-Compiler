@@ -117,12 +117,36 @@ void append_quadrupel(quadruple * quad) {
 	}
 }
 
+void backpatch(jump * list, quadruple * quad) {
+	if (list == NULL) { return; }
+
+	do {
+		if (list->quad != NULL) {
+			list->quad->result = (char *) malloc(10 * sizeof(char));
+			sprintf(list->quad->result, "%i", quad->line);
+		}
+	} while ((list = list->next) != NULL);
+}
+
+jump * merge(jump * list1, jump * list2) {
+	if (list1 == NULL) {
+		return list2;
+	}
+
+	jump * current_item = list1;
+	while ((current_item = current_item->next) != NULL) { }
+
+	current_item->next = list2;
+	return list1;
+}
+
 void compile_quadruplecode() {
 	quadruple * current_quad = quadList;
 
 	printf("--- Quadruplecode:\n");
 
 	do {
+		printf("%i: ", current_quad->line);
 		switch (current_quad->operator) {
 			case Q_ASSIGNMENT:
 				printf("%s := %s \n", current_quad->result, current_quad->operand_1);
@@ -151,6 +175,17 @@ void compile_quadruplecode() {
 			case Q_MINUS:
 				printf("%s := %s - %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
 				break;
+			case Q_GREATER_OR_EQUAL:
+				printf("if %s >= %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
+				break;
+			case Q_LESS_OR_EQUAL:
+				printf("if %s >= %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
+				break;
+			case Q_GOTO:
+				printf("goto %s\n", current_quad->result);
+				break;
+			case Q_RETURN:
+				printf("RETURN %s\n", current_quad->result);
 			case Q_NOP:
 				// Do nothing
 				break;
@@ -164,6 +199,8 @@ void compile_quadruplecode() {
 	printf("---");
 }
 
+
+int curr_line = 0;
 quadruple * new_quadruple(char * result, quad_type operator, char * operand_1, char* operand_2) {
 	quadruple * quad = (quadruple *) malloc(sizeof(quadruple));
 
@@ -172,10 +209,25 @@ quadruple * new_quadruple(char * result, quad_type operator, char * operand_1, c
 	quad->operator = operator;
 	quad->result = result;
 	quad->next = NULL;
+	quad->line = 0;
 
-	append_quadrupel(quad);
+	quad->truelist = NULL;
+	quad->falselist = NULL;
+	quad->nextlist = NULL;
+
+	if (operator != Q_NOP) {
+		quad->line = curr_line++;
+		append_quadrupel(quad);
+	}
 
 	return quad;
+}
+
+jump * new_jumplist(quadruple * target) {
+	jump * list = (jump *) malloc(sizeof(jump));
+	list->quad = target;
+	list->next = NULL;
+	return list;
 }
 
 symtabEntry * new_symbol() {
