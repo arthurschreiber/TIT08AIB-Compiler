@@ -13,7 +13,7 @@ symtabEntry * scope;
 	int number;
 	char * string;
 	symtabEntryType type;
-	exp * exp;
+	quadruple * quad;
 }
 
 %token INT FLOAT VOID INC_OP DEC_OP LOG_AND LOG_OR NOT_EQUAL EQUAL
@@ -23,7 +23,7 @@ symtabEntry * scope;
 %type<string> IDENTIFIER id CONSTANT
 %type<number> declaration_list declaration parameter_list function_body
 %type<type> var_type
-%type<exp> expression
+%type<quad> expression
 
 %left LOG_AND LOG_OR
 %left LESS_OR_EQUAL GREATER_OR_EQUAL NOT_EQUAL EQUAL '<' '>'
@@ -116,21 +116,17 @@ unmatched_statement
 assignment
     : expression                 
     | id '='          expression {
-    	if ($3->type == EXP_INT || $3->type == EXP_FLOAT) {
-			printf("Genquad: %s := %s\n", $1, $3->value);
-    	} else if ($3->type == EXP_SYMBOL) {
-	    	printf("Genquad: %s := %s\n", $1, $3->value);
-    	}
+    	new_quadruple($1, Q_ASSIGNMENT, $3->result, NULL);
     }
     ;
 
 expression
     : INC_OP expression                        {
-		printf("Genquad: %s := %s + 1\n", $2->value, $2->value);
+    	new_quadruple($2->result, Q_INC, $2->result, NULL);
 		$$ = $2;
 	} 
     | DEC_OP expression                        {
-		printf("Genquad: %s := %s - 1\n", $2->value, $2->value);
+    	new_quadruple($2->result, Q_DEC, $2->result, NULL);
 		$$ = $2;
 	} 
     | expression LOG_OR           expression   
@@ -143,48 +139,46 @@ expression
     | expression '<'              expression   
     | expression SHIFTLEFT        expression     {
 		symtabEntry * sym = new_helper_variable(INTEGER, scope);
-		
-		printf("Genquad: %s := %s << %s\n", sym->name, $1->value, $3->value);
-		
-		$$ = new_exp_symbol(sym->name);
+		$$ = new_quadruple(sym->name, Q_SHIFT, $1->result, $3->result);
     } 
     | expression '+'              expression {
 		symtabEntry * sym = new_helper_variable(INTEGER, scope);
-		
-		printf("Genquad: %s := %s + %s\n", sym->name, $1->value, $3->value);
-		
-		$$ = new_exp_symbol(sym->name);
+		$$ = new_quadruple(sym->name, Q_PLUS, $1->result, $3->result);
     } 
     | expression '-'              expression   {
 		symtabEntry * sym = new_helper_variable(INTEGER, scope);
-		
-		printf("Genquad: %s := %s - %s\n", sym->name, $1->value, $3->value);
-		
-		$$ = new_exp_symbol(sym->name);
+		$$ = new_quadruple(sym->name, Q_MINUS, $1->result, $3->result);
     } 
     | expression '*'              expression   {
 		symtabEntry * sym = new_helper_variable(INTEGER, scope);
-		
-		printf("Genquad: %s := %s * %s\n", sym->name, $1->value, $3->value);
-		
-		$$ = new_exp_symbol(sym->name);
+		$$ = new_quadruple(sym->name, Q_MULTIPLY, $1->result, $3->result);
     } 
     | expression '/'              expression   {
 		symtabEntry * sym = new_helper_variable(INTEGER, scope);
-		
-		printf("Genquad: %s := %s / %s\n", sym->name, $1->value, $3->value);
-		
-		$$ = new_exp_symbol(sym->name);
+		$$ = new_quadruple(sym->name, Q_DIVIDE, $1->result, $3->result);
     } 
-    | expression '%'              expression   
+    | expression '%'              expression   {
+		symtabEntry * sym = new_helper_variable(INTEGER, scope);
+		$$ = new_quadruple(sym->name, Q_MOD, $1->result, $3->result);
+	}
     | '!' expression                           
     | '+' expression %prec U_PLUS              
     | '-' expression %prec U_MINUS             
-    | CONSTANT                                  { $$ = new_exp_constant($1); }
-    | '(' expression ')'                       
-    | id '(' exp_list ')'                      
-    | id '('  ')'                              
-    | id 										{ $$ = new_exp_symbol($1); }
+    | CONSTANT                                  {
+		$$ = new_quadruple($1, Q_NOP, NULL, NULL);
+    }
+    | '(' expression ')'                        {
+    	$$ = $2;
+    }
+    | id '(' exp_list ')'                       {
+		$$ = new_quadruple("func(args)", Q_NOP, NULL, NULL);
+    }
+    | id '('  ')'                               {
+		$$ = new_quadruple("func()", Q_NOP, NULL, NULL);
+    }
+    | id 										{ 
+		$$ = new_quadruple($1, Q_NOP, NULL, NULL);
+    }
     ;
 
 exp_list

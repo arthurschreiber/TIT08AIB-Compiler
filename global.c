@@ -104,32 +104,78 @@ symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 	return NULL;
 }
 
-exp * new_exp() {
-	return (exp *) malloc(sizeof(exp));
-}
-
-exp * new_exp_symbol(char * name) {
-	exp * expression = new_exp();
-	expression->value = name;
-	expression->type = EXP_SYMBOL;
-	return expression;
-}
-
-exp * new_exp_constant(char * constant) {
-	exp * expression = new_exp();
-	expression->value = constant;
-
-	if (strchr(constant, '.') != NULL) {
-		expression->type = EXP_FLOAT;
+quadruple * quadList = NULL;
+void append_quadrupel(quadruple * quad) {
+	if (quadList == NULL) {
+		quadList = quad;
 	} else {
-		expression->type = EXP_INT;
+		quadruple * current_quad = quadList;
+		while (current_quad->next) {
+			current_quad = current_quad->next;
+		}
+		current_quad->next = quad;
 	}
-
-	return expression;
 }
 
-quadruple * new_quadruple() {
-	return (quadruple *) malloc(sizeof(quadruple));
+void compile_quadruplecode() {
+	quadruple * current_quad = quadList;
+
+	printf("--- Quadruplecode:\n");
+
+	do {
+		switch (current_quad->operator) {
+			case Q_ASSIGNMENT:
+				printf("%s := %s \n", current_quad->result, current_quad->operand_1);
+				break;
+			case Q_INC:
+				printf("%s := %s + 1\n", current_quad->result, current_quad->operand_1);
+				break;
+			case Q_DEC:
+				printf("%s := %s - 1\n", current_quad->result, current_quad->operand_1);
+				break;
+			case Q_SHIFT:
+				printf("%s := %s << %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
+				break;
+			case Q_MULTIPLY:
+				printf("%s := %s * %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
+				break;
+			case Q_DIVIDE:
+				printf("%s := %s / %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
+				break;
+			case Q_MOD:
+				printf("%s := %s %% %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
+				break;
+			case Q_PLUS:
+				printf("%s := %s + %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
+				break;
+			case Q_MINUS:
+				printf("%s := %s - %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
+				break;
+			case Q_NOP:
+				// Do nothing
+				break;
+			default:
+				printf("Invalid operation!\n");
+				break;
+		}
+
+	} while ((current_quad = current_quad->next) != NULL);
+
+	printf("---");
+}
+
+quadruple * new_quadruple(char * result, quad_type operator, char * operand_1, char* operand_2) {
+	quadruple * quad = (quadruple *) malloc(sizeof(quadruple));
+
+	quad->operand_1 = operand_1;
+	quad->operand_2 = operand_2;
+	quad->operator = operator;
+	quad->result = result;
+	quad->next = NULL;
+
+	append_quadrupel(quad);
+
+	return quad;
 }
 
 symtabEntry * new_symbol() {
@@ -328,6 +374,8 @@ int main (void){
 		writeSymboltable(theSymboltable, outputFile);
 	fclose(outputFile);
 	
+	compile_quadruplecode();
+
 	return 1;
 }
 
