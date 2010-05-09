@@ -89,6 +89,7 @@ statement_list
     : statement
     | statement_list statement  {
     	backpatch($1->nextlist, $2);
+    	$$ = $2;
     }
     ;
 
@@ -119,9 +120,9 @@ matched_statement
 
 unmatched_statement
     : IF '(' assignment ')' statement                       {
-		$$ = new_quadruple("", Q_NOP, NULL, NULL);
-		$$->nextlist = merge($5->nextlist, $3->falselist);
     	backpatch($3->truelist, $5);
+    	$5->nextlist = merge($5->nextlist, $3->falselist);
+    	$$ = $5;
     }
     | WHILE '(' assignment ')' unmatched_statement          
     | IF '(' assignment ')' matched_statement ELSE unmatched_statement 
@@ -131,7 +132,8 @@ unmatched_statement
 assignment
     : expression                 
     | id '='          expression {
-    	$$ = new_quadruple($1, Q_ASSIGNMENT, $3->result, NULL);
+	    new_quadruple($1, Q_ASSIGNMENT, $3->result, NULL);
+    	$$ = $3;
     }
     ;
 
