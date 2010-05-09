@@ -158,11 +158,23 @@ expression
     | DEC_OP expression                        {
     	$$ = new_quadruple($2->result, Q_DEC, $2->result, NULL);
 	} 
-    | expression LOG_OR           expression   
-    | expression LOG_AND          expression
     | expression NOT_EQUAL        expression   
     | expression EQUAL            expression   
     | expression GREATER_OR_EQUAL expression   
+    | expression LOG_OR           expression   {
+    	backpatch($1->falselist, $3);
+    	
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->truelist = merge($1->truelist, $3->truelist);
+    	$$->falselist = $3->falselist;
+    }
+    | expression LOG_AND          expression   {
+        backpatch($1->truelist, $3);
+    	
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->falselist = merge($1->falselist, $3->falselist);
+    	$$->truelist = $3->truelist;
+    }
     | expression LESS_OR_EQUAL    expression   {
     	$$ = new_quadruple("", Q_NOP, NULL, NULL);
     	$$->truelist = new_jumplist(
