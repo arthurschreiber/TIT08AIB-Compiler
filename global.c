@@ -141,11 +141,33 @@ jump * merge(jump * list1, jump * list2) {
 		return list2;
 	}
 
-	jump * current_item = list1;
-	while ((current_item = current_item->next) != NULL) { }
+	jump * new_list = NULL;
 
-	current_item->next = list2;
-	return list1;
+	do {
+		if (list1 == NULL) {
+			break;
+		}
+
+		if (new_list == NULL) {
+			new_list = new_jumplist(list1->quad);
+		} else {
+			new_list->next = new_jumplist(list1->quad);
+		}
+	} while ((list1 = list1->next) != NULL);
+
+	do {
+		if (list2 == NULL) {
+			break;
+		}
+
+		if (new_list == NULL) {
+			new_list = new_jumplist(list2->quad);
+		} else {
+			new_list->next = new_jumplist(list2->quad);
+		}
+	} while ((list2 = list2->next) != NULL);
+
+	return new_list;
 }
 
 void compile_quadruplecode() {
