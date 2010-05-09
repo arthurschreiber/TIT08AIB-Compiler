@@ -28,8 +28,6 @@ void { return VOID; }
 \>\=   { return GREATER_OR_EQUAL; }
 \<\=   { return LESS_OR_EQUAL; }
 \<\<   { return SHIFTLEFT; }
-\+   { return U_PLUS; }
-\-   { return U_MINUS; }
 
 \< { return '<'; }
 \> { return '>'; }

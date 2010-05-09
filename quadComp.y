@@ -255,8 +255,13 @@ expression
     	$$->truelist = $2->falselist;
     	$$->falselist = $2->truelist;
     }
-    | '+' expression %prec U_PLUS              
-    | '-' expression %prec U_MINUS             
+    | '+' expression %prec U_PLUS               {
+		$$ = $2;
+    }
+    | '-' expression %prec U_MINUS              {
+		symtabEntry * sym = new_helper_variable(INTEGER, scope);
+		$$ = new_quadruple(sym->name, Q_MINUS, "0", $2->result);
+    }
     | CONSTANT                                  {
 		$$ = new_quadruple($1, Q_NOP, NULL, NULL);
     }
