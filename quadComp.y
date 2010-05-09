@@ -89,7 +89,9 @@ statement_list
     : statement
     | statement_list statement  {
     	backpatch($1->nextlist, $2);
-    	$$ = $2;
+
+		$$ = new_quadruple("", Q_NOP, NULL, NULL);
+		$$->nextlist = $2->nextlist;
     }
     ;
 
@@ -110,7 +112,18 @@ matched_statement
     | RETURN assignment ';'                                         {
     	$$ = new_quadruple($2->result, Q_RETURN, NULL, NULL);
     }
-    | WHILE '(' assignment ')' matched_statement                             
+    | WHILE '(' assignment ')' matched_statement                    {
+    	backpatch($3->truelist, $5);
+    	backpatch($5->nextlist, $3);
+
+		char * line = malloc(10 * sizeof(char));
+		sprintf(line, "%i", $3->line);
+
+		new_quadruple(line, Q_GOTO, NULL, NULL);
+		
+		$$ = new_quadruple("", Q_NOP, NULL, NULL);
+		$$->nextlist = $3->falselist;
+    }
     | DO statement WHILE '(' assignment ')' ';'                              
     | '{' statement_list '}'                                        {
     	$$ = $2;
@@ -121,8 +134,9 @@ matched_statement
 unmatched_statement
     : IF '(' assignment ')' statement                       {
     	backpatch($3->truelist, $5);
-    	$5->nextlist = merge($5->nextlist, $3->falselist);
-    	$$ = $5;
+    	
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+		$$->nextlist = merge($5->nextlist, $3->falselist);
     }
     | WHILE '(' assignment ')' unmatched_statement          
     | IF '(' assignment ')' matched_statement ELSE unmatched_statement 

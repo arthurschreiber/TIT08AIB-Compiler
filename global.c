@@ -209,7 +209,7 @@ quadruple * new_quadruple(char * result, quad_type operator, char * operand_1, c
 	quad->operator = operator;
 	quad->result = result;
 	quad->next = NULL;
-	quad->line = 0;
+	quad->line = curr_line;
 
 	quad->truelist = NULL;
 	quad->falselist = NULL;
