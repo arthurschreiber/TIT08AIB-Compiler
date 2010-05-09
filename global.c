@@ -128,6 +128,14 @@ void backpatch(jump * list, quadruple * quad) {
 	} while ((list = list->next) != NULL);
 }
 
+
+jump * new_jumplist(quadruple * target) {
+	jump * list = (jump *) malloc(sizeof(jump));
+	list->quad = target;
+	list->next = NULL;
+	return list;
+}
+
 jump * merge(jump * list1, jump * list2) {
 	if (list1 == NULL) {
 		return list2;
@@ -221,13 +229,6 @@ quadruple * new_quadruple(char * result, quad_type operator, char * operand_1, c
 	}
 
 	return quad;
-}
-
-jump * new_jumplist(quadruple * target) {
-	jump * list = (jump *) malloc(sizeof(jump));
-	list->quad = target;
-	list->next = NULL;
-	return list;
 }
 
 symtabEntry * new_symbol() {
