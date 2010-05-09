@@ -209,7 +209,19 @@ void compile_quadruplecode() {
 				printf("if %s >= %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
 				break;
 			case Q_LESS_OR_EQUAL:
-				printf("if %s >= %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
+				printf("if %s <= %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
+				break;
+			case Q_GREATER:
+				printf("if %s > %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
+				break;
+			case Q_LESS:
+				printf("if %s < %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
+				break;
+			case Q_NOT_EQUAL:
+				printf("if %s != %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
+				break;
+			case Q_EQUAL:
+				printf("if %s == %s goto %s\n", current_quad->operand_1, current_quad->operand_2, current_quad->result);
 				break;
 			case Q_GOTO:
 				printf("goto %s\n", current_quad->result);

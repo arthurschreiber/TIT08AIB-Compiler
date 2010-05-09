@@ -31,6 +31,9 @@ void { return VOID; }
 \+   { return U_PLUS; }
 \-   { return U_MINUS; }
 
+\< { return '<'; }
+\> { return '>'; }
+
 if     { return IF; }
 else   { return ELSE; }
 do     { return DO; }

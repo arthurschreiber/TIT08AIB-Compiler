@@ -133,10 +133,10 @@ matched_statement
 
 unmatched_statement
     : IF '(' assignment ')' statement                       {
-    	backpatch($3->truelist, $5);
+   		backpatch($3->truelist, $5);
     	
     	$$ = new_quadruple("", Q_NOP, NULL, NULL);
-		$$->nextlist = merge($5->nextlist, $3->falselist);
+		$$->nextlist = merge($5->nextlist, $3->falselist);    	
     }
     | WHILE '(' assignment ')' unmatched_statement          
     | IF '(' assignment ')' matched_statement ELSE unmatched_statement 
@@ -158,9 +158,6 @@ expression
     | DEC_OP expression                        {
     	$$ = new_quadruple($2->result, Q_DEC, $2->result, NULL);
 	} 
-    | expression NOT_EQUAL        expression   
-    | expression EQUAL            expression   
-    | expression GREATER_OR_EQUAL expression   
     | expression LOG_OR           expression   {
     	backpatch($1->falselist, $3);
     	
@@ -175,6 +172,33 @@ expression
     	$$->falselist = merge($1->falselist, $3->falselist);
     	$$->truelist = $3->truelist;
     }
+    | expression NOT_EQUAL        expression   {
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->truelist = new_jumplist(
+    		new_quadruple("", Q_NOT_EQUAL, $1->result, $3->result)
+    	);
+		$$->falselist = new_jumplist(
+			new_quadruple("", Q_GOTO, NULL, NULL)
+		);
+    }
+    | expression EQUAL            expression   {
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->truelist = new_jumplist(
+    		new_quadruple("", Q_EQUAL, $1->result, $3->result)
+    	);
+		$$->falselist = new_jumplist(
+			new_quadruple("", Q_GOTO, NULL, NULL)
+		);
+    }
+    | expression GREATER_OR_EQUAL expression   {
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->truelist = new_jumplist(
+    		new_quadruple("", Q_GREATER_OR_EQUAL, $1->result, $3->result)
+    	);
+		$$->falselist = new_jumplist(
+			new_quadruple("", Q_GOTO, NULL, NULL)
+		);
+    }
     | expression LESS_OR_EQUAL    expression   {
     	$$ = new_quadruple("", Q_NOP, NULL, NULL);
     	$$->truelist = new_jumplist(
@@ -184,8 +208,24 @@ expression
 			new_quadruple("", Q_GOTO, NULL, NULL)
 		);
     }
-    | expression '>'              expression   	 
-    | expression '<'              expression   
+    | expression '>'              expression   	 {
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->truelist = new_jumplist(
+    		new_quadruple("", Q_GREATER, $1->result, $3->result)
+    	);
+		$$->falselist = new_jumplist(
+			new_quadruple("", Q_GOTO, NULL, NULL)
+		);
+    }
+    | expression '<'              expression   	{
+    	$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->truelist = new_jumplist(
+    		new_quadruple("", Q_LESS, $1->result, $3->result)
+    	);
+		$$->falselist = new_jumplist(
+			new_quadruple("", Q_GOTO, NULL, NULL)
+		);
+    }
     | expression SHIFTLEFT        expression     {
 		symtabEntry * sym = new_helper_variable(INTEGER, scope);
 		$$ = new_quadruple(sym->name, Q_SHIFT, $1->result, $3->result);
@@ -210,7 +250,11 @@ expression
 		symtabEntry * sym = new_helper_variable(INTEGER, scope);
 		$$ = new_quadruple(sym->name, Q_MOD, $1->result, $3->result);
 	}
-    | '!' expression                           
+    | '!' expression                           {
+		$$ = new_quadruple("", Q_NOP, NULL, NULL);
+    	$$->truelist = $2->falselist;
+    	$$->falselist = $2->truelist;
+    }
     | '+' expression %prec U_PLUS              
     | '-' expression %prec U_MINUS             
     | CONSTANT                                  {
