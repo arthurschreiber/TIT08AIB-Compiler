@@ -4,10 +4,14 @@
 %option yylineno
 
 %{
-
-#include <string.h>
-#include "global.h"
-#include "quadComp.tab.h"
+#include "symbol_table.h"
+#include "quadruple.h"
+#include "jumplist.h"
+	
+#include "expression.h"
+#include "statement.h"
+	
+#include "y.tab.h"
 
 %}
 

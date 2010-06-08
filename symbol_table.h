@@ -1,12 +1,19 @@
-#ifndef GLOBAL_H_
-#define GLOBAL_H_
+/*
+ *  symbol_table.h
+ *  compilerbau
+ *
+ *  Created by Arthur Schreiber on 07.06.10.
+ *  Copyright 2010 -/-. All rights reserved.
+ *
+ */
 
-#include <stdlib.h>
+#ifndef SYMBOL_TABLE_H
+#define SYMBOL_TABLE_H
+
 #include <stdio.h>
-#include <string.h>
 
 typedef enum symtab_EntryType {INTEGER, REAL, BOOL, PROC, NOP, ARR, FUNC, PROG, PRG_PARA}
-	symtabEntryType;
+symtabEntryType;
 
 typedef struct a_symtabEntry{
 	char * name;
@@ -23,41 +30,6 @@ typedef struct a_symtabEntry{
 	struct a_symtabEntry * next;
 } symtabEntry;
 
-typedef enum a_quad_type {
-	Q_NOP, Q_ASSIGNMENT, Q_INC, Q_DEC, Q_SHIFT,
-	Q_MULTIPLY, Q_DIVIDE, Q_MOD,
-	Q_PLUS, Q_MINUS,
-
-	Q_GREATER_OR_EQUAL, Q_LESS_OR_EQUAL, Q_EQUAL, Q_NOT_EQUAL, Q_GREATER, Q_LESS,
-	Q_GOTO, Q_RETURN
-} quad_type;
-
-struct a_jump;
-
-typedef struct a_quadruple {
-	quad_type type;
-	char * operand_1;
-	char * operand_2;
-	quad_type operator;
-	char * result;
-	int line;
-
-	struct a_jump * truelist;
-	struct a_jump * falselist;
-	struct a_jump * nextlist;
-
-	struct a_quadruple * next;
-} quadruple;
-
-typedef struct a_jump {
-	quadruple * quad;
-	struct a_jump * next;
-} jump;
-
-
-quadruple * new_quadruple();
-void compile_quadruplecode();
-
 symtabEntry * new_variable(char * name, symtabEntryType type, symtabEntry * scope);
 symtabEntry * new_param_variable(char * name, symtabEntryType type, symtabEntry * scope, int parameter);
 symtabEntry * new_helper_variable(symtabEntryType type, symtabEntry * scope);
@@ -72,6 +44,5 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 
 void getSymbolTypePrintout(symtabEntryType type, char * writeIn);
 void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile);
-void yyerror(char *);
 
-#endif /*GLOBAL_H_*/
+#endif
