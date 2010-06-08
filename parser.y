@@ -12,6 +12,7 @@
 #include <string.h>
 	
 symtabEntry * scope;
+bool in_boolean_context = false;
 
 %}
 
@@ -55,6 +56,14 @@ programm
 
 marker: /* empty */ {
 	$$ = get_next_quad();
+};
+
+start_bool: /* empty */ {
+	in_boolean_context = true;
+};
+
+end_bool: /* empty */ {
+	in_boolean_context = false;
 };
 
 function
@@ -120,12 +129,12 @@ statement
 ;
 
 matched_statement
-: IF '(' assignment ')' marker matched_statement ELSE marker matched_statement {
+: IF '(' start_bool assignment end_bool ')' marker matched_statement ELSE marker matched_statement {
 	$$ = new_statement();
-	$$->nextlist = merge($6->nextlist, $9->nextlist);
+	$$->nextlist = merge($8->nextlist, $11->nextlist);
 		
-	backpatch($3->truelist, $5);
-	backpatch($3->falselist, $8);
+	backpatch($4->truelist, $7);
+	backpatch($4->falselist, $10);
 }
 | assignment ';' {
 	$$ = new_statement();
@@ -138,21 +147,21 @@ matched_statement
 	new_quadruple($2->sym, Q_RETURN, NULL, NULL);
 	$$ = new_statement();
 }
-| WHILE '(' marker assignment ')' marker matched_statement {
+| WHILE '(' marker start_bool assignment end_bool ')' marker matched_statement {
 	$$ = new_statement();
-	backpatch($4->truelist, $6);
+	backpatch($5->truelist, $8);
 	
-	$$->nextlist = $4->falselist;
-	backpatch($7->nextlist, $3);
+	$$->nextlist = $5->falselist;
+	backpatch($9->nextlist, $3);
 		
 	quadruple * quad = new_quadruple("", Q_GOTO, NULL, NULL);
 	quad->goto_next = $3;
 }
-| DO marker statement WHILE '(' marker assignment ')' ';' {
+| DO marker statement WHILE '(' marker start_bool assignment end_bool ')' ';' {
 	$$ = new_statement();
-	backpatch($7->truelist, $2);
+	backpatch($8->truelist, $2);
 	
-	$$->nextlist = $7->falselist;
+	$$->nextlist = $8->falselist;
 }
 | '{' statement_list '}' { $$ = $2; }
 | '{' '}' {
@@ -161,34 +170,48 @@ matched_statement
 ;
 
 unmatched_statement
-: IF '(' assignment ')' marker statement {
+: IF '(' start_bool assignment end_bool ')' marker statement {
 	$$ = new_statement();
 	
-	backpatch($3->truelist, $5);
-	$$->nextlist = merge($6->nextlist, $3->falselist);
+	backpatch($4->truelist, $7);
+	$$->nextlist = merge($8->nextlist, $4->falselist);
 	
 }
-| WHILE '(' marker assignment ')' marker unmatched_statement {
+| WHILE '(' marker start_bool assignment end_bool ')' marker unmatched_statement {
 	$$ = new_statement();
-	backpatch($4->truelist, $6);
+	backpatch($5->truelist, $8);
 	
-	$$->nextlist = $4->falselist;
-	backpatch($7->nextlist, $3);
+	$$->nextlist = $5->falselist;
+	backpatch($9->nextlist, $3);
 	
 	quadruple * quad = new_quadruple("", Q_GOTO, NULL, NULL);
 	quad->goto_next = $3;
 }
-| IF '(' assignment ')' marker matched_statement ELSE marker unmatched_statement {
+| IF '(' start_bool assignment end_bool ')' marker matched_statement ELSE marker unmatched_statement {
 	$$ = new_statement();
-	$$->nextlist = merge($6->nextlist, $9->nextlist);
+	$$->nextlist = merge($8->nextlist, $11->nextlist);
 	
-	backpatch($3->truelist, $5);
-	backpatch($3->falselist, $8);
+	backpatch($4->truelist, $7);
+	backpatch($4->falselist, $10);
 }
 ;
 
 assignment
-: expression                 
+: expression {
+	if (in_boolean_context && $1->boolean == false) {
+		$$ = new_expression();
+		$$->boolean = true;
+		
+		$$->truelist = new_jumplist(get_next_quad());
+		new_quadruple("", Q_NOT_EQUAL, $1->sym, "0");
+		
+		$$->falselist = new_jumplist(get_next_quad());
+		new_quadruple("", Q_GOTO, NULL, NULL);
+	} else {
+		$$ = $1;
+	}
+
+}
 | id '=' expression {
 	new_quadruple(strdup($1), Q_ASSIGNMENT, $3->sym, NULL);
 
