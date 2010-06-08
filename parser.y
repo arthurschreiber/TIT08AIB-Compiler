@@ -230,80 +230,116 @@ expression
 	$$ = $2;
 } 
 | expression LOG_OR marker expression {
-	backpatch($1->falselist, $3);
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
 	
 	$$ = new_expression();
-	$$->boolean = true;
-	$$->truelist = merge($1->truelist, $4->truelist);
-	$$->falselist = $4->falselist;
+	$$->sym = sym->name;
+	
+	quadruple * first_quad, * second_quad;
+	
+	first_quad = new_quadruple("", Q_NOT_EQUAL, $1->sym, "0");
+	second_quad = new_quadruple("", Q_NOT_EQUAL, $4->sym, "0");
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	first_quad->goto_next = second_quad->goto_next = get_next_quad();
 }
 | expression LOG_AND marker expression {
-	backpatch($1->truelist, $3);
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
 	
 	$$ = new_expression();
-	$$->boolean = true;
-	$$->falselist = merge($1->falselist, $4->falselist);
-	$$->truelist = $4->truelist;
+	$$->sym = sym->name;
+	
+	quadruple * first_quad, * second_quad;
+	
+	first_quad = new_quadruple("", Q_EQUAL, $1->sym, "0");
+	second_quad = new_quadruple("", Q_EQUAL, $4->sym, "0");
+	new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	first_quad->goto_next = second_quad->goto_next = get_next_quad();
 }
 | expression NOT_EQUAL expression {
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	
 	$$ = new_expression();
-	$$->boolean = true;
+	$$->sym = sym->name;
 	
-	$$->truelist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_NOT_EQUAL, $1->sym, $3->sym);
+	quadruple * true_quad, * false_quad;
 	
-	$$->falselist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad = new_quadruple("", Q_NOT_EQUAL, $1->sym, $3->sym);
+	false_quad = new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad->goto_next = new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	false_quad->goto_next = get_next_quad();
 }
 | expression EQUAL expression {
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	
 	$$ = new_expression();
-	$$->boolean = true;
+	$$->sym = sym->name;
 	
-	$$->truelist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_EQUAL, $1->sym, $3->sym);
+	quadruple * true_quad, * false_quad;
 	
-	$$->falselist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad = new_quadruple("", Q_EQUAL, $1->sym, $3->sym);
+	false_quad = new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad->goto_next = new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	false_quad->goto_next = get_next_quad();
 }
 | expression GREATER_OR_EQUAL expression {
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	
 	$$ = new_expression();
-	$$->boolean = true;
+	$$->sym = sym->name;
 	
-	$$->truelist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GREATER_OR_EQUAL, $1->sym, $3->sym);
+	quadruple * true_quad, * false_quad;
 	
-	$$->falselist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad = new_quadruple("", Q_GREATER_OR_EQUAL, $1->sym, $3->sym);
+	false_quad = new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad->goto_next = new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	false_quad->goto_next = get_next_quad();
 }
 | expression LESS_OR_EQUAL expression {
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	
 	$$ = new_expression();
-	$$->boolean = true;
+	$$->sym = sym->name;
 
-	$$->truelist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_LESS_OR_EQUAL, $1->sym, $3->sym);
-
-	$$->falselist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GOTO, NULL, NULL);
+	quadruple * true_quad, * false_quad;
+	
+	true_quad = new_quadruple("", Q_LESS_OR_EQUAL, $1->sym, $3->sym);
+	false_quad = new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad->goto_next = new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	false_quad->goto_next = get_next_quad();
 }
 | expression '>' expression {
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	
 	$$ = new_expression();
-	$$->boolean = true;
+	$$->sym = sym->name;
 	
-	$$->truelist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GREATER, $1->sym, $3->sym);
+	quadruple * true_quad, * false_quad;
 	
-	$$->falselist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad = new_quadruple("", Q_GREATER, $1->sym, $3->sym);
+	false_quad = new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad->goto_next = new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	false_quad->goto_next = get_next_quad();
 }
 | expression '<' expression {
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	
 	$$ = new_expression();
-	$$->boolean = true;
+	$$->sym = sym->name;
 	
-	$$->truelist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_LESS, $1->sym, $3->sym);
+	quadruple * true_quad, * false_quad;
 	
-	$$->falselist = new_jumplist(get_next_quad());
-	new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad = new_quadruple("", Q_LESS, $1->sym, $3->sym);
+	false_quad = new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad->goto_next = new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	false_quad->goto_next = get_next_quad();
 }
 | expression SHIFTLEFT expression {
 	symtabEntry * sym = new_helper_variable(INTEGER, scope);
