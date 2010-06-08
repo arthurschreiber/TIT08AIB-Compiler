@@ -230,8 +230,20 @@ expression
 	$$ = $2;
 } 
 | expression LOG_OR marker expression {
+	backpatch($1->falselist, $3);
+	
+	$$ = new_expression();
+	$$->boolean = true;
+	$$->truelist = merge($1->truelist, $4->truelist);
+	$$->falselist = $4->falselist;
 }
 | expression LOG_AND marker expression {
+	backpatch($1->truelist, $3);
+	
+	$$ = new_expression();
+	$$->boolean = true;
+	$$->falselist = merge($1->falselist, $4->falselist);
+	$$->truelist = $4->truelist;
 }
 | expression NOT_EQUAL expression {
 	$$ = new_expression();
