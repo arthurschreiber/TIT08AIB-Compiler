@@ -427,6 +427,8 @@ expression
 		param_count++;
 	}
 
+	function_and_parameter_check($1, param_count);
+	
 	char * call = (char *) malloc(sizeof(char) * 100);
 	sprintf(call, "CALL %s, %i", $1, param_count);
 
@@ -437,6 +439,8 @@ expression
   $$->sym = sym->name;
 }
 | id '('  ')' {
+	function_and_parameter_check($1, 0);
+	
 	char * call = (char *) malloc(sizeof(char) * 100);
 	sprintf(call, "CALL %s, 0", $1);
 	

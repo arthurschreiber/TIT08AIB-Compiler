@@ -42,6 +42,8 @@ symtabEntry * append_new_symbol(char *, symtabEntryType, symtabEntryType, int, s
 
 void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType type, int parameter_count);
 
+void function_and_parameter_check(char * name, int param_count);
+
 void getSymbolTypePrintout(symtabEntryType type, char * writeIn);
 void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile);
 

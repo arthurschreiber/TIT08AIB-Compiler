@@ -112,6 +112,15 @@ symtabEntry * find_symbol(char * name, symtabEntry * vater) {
 	return NULL;
 }
 
+void function_and_parameter_check(char * name, int param_count) {
+	symtabEntry * func_sym = find_symbol(name, NULL);
+	if (func_sym == NULL) {
+		printf("Error: There is no function named '%s'!\n", name);
+	} else if (func_sym->parameter != param_count) {
+		printf("Error: '%s' expected %i parameters, but got %i!\n", name, func_sym->parameter, param_count);
+	}
+}
+
 symtabEntry * new_symbol() {
 	symtabEntry * symbol = (symtabEntry *) malloc(sizeof(symtabEntry));
 	
