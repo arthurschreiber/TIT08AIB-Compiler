@@ -70,18 +70,21 @@ end_bool: /* empty */ {
 	in_boolean_context = false;
 };
 
+add_return: /* empty */ {
+	new_quadruple("", Q_RETURN, NULL, NULL);
+}
+
 function
 : var_type id '(' parameter_list ')' ';' {
 	update_and_append_scope(scope, $2, $1, $4);
 	scope = new_symbol();
 }
-| var_type id '(' parameter_list ')' function_body {
+| var_type id '(' parameter_list ')' function_body add_return {
 	update_and_append_scope(scope, $2, $1, $4);
 	scope = new_symbol();
 	// Generate a return quad here, so we can
 	// handle the case of an if ... else as the last statement
 	// in a function_body.
-	new_quadruple("", Q_RETURN, NULL, NULL);
 }
 ;
 
