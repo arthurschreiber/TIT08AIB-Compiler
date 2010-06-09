@@ -127,6 +127,28 @@ void variable_check(char * name, symtabEntry * scope) {
 	}
 }
 
+symtabEntryType get_variable_type(char * name, symtabEntry * scope) {
+	symtabEntry * sym = find_symbol_in_scope(name, scope);
+	if (sym != NULL) {
+		return sym->type;
+	} else {
+		return INTEGER;
+	}
+}
+
+symtabEntryType get_function_type(char * name) {
+	symtabEntry * sym = find_symbol(name, NULL);
+	if (sym != NULL) {
+		if (sym->internType == INTEGER || sym->internType == REAL) {
+			return sym->internType;
+		} else {
+			return INTEGER;
+		}
+	} else {
+		return INTEGER;
+	}
+}
+
 symtabEntry * new_symbol() {
 	symtabEntry * symbol = (symtabEntry *) malloc(sizeof(symtabEntry));
 	

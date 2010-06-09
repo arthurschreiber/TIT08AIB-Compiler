@@ -45,6 +45,9 @@ void update_and_append_scope(symtabEntry * scope, char * name, symtabEntryType t
 void function_and_parameter_check(char * name, int param_count);
 void variable_check(char * name, symtabEntry * scope);
 
+symtabEntryType get_variable_type(char * name, symtabEntry * scope);
+symtabEntryType get_function_type(char * name);
+
 void getSymbolTypePrintout(symtabEntryType type, char * writeIn);
 void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile);
 

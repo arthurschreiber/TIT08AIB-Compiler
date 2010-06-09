@@ -11,6 +11,7 @@
 #define EXPRESSION_H
 
 #include <stdlib.h>
+#include "quadruple.h"
 #include "jumplist.h"
 #include "symbol_table.h"
 
@@ -18,6 +19,7 @@ typedef struct a_exp {
 	char * sym;
 	struct a_jump * truelist;
 	struct a_jump * falselist;
+	symtabEntryType type;
 } expression;
 
 expression * new_expression();

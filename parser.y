@@ -249,6 +249,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * first_quad, * second_quad;
 	
@@ -263,6 +264,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * first_quad, * second_quad;
 	
@@ -277,6 +279,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * true_quad, * false_quad;
 	
@@ -291,6 +294,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * true_quad, * false_quad;
 	
@@ -305,6 +309,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * true_quad, * false_quad;
 	
@@ -319,6 +324,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * true_quad, * false_quad;
 	
@@ -333,6 +339,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * true_quad, * false_quad;
 	
@@ -347,6 +354,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * true_quad, * false_quad;
 	
@@ -356,7 +364,7 @@ expression
 	false_quad->goto_next = get_next_quad();
 }
 | expression SHIFTLEFT expression {
-	symtabEntry * sym = new_helper_variable(REAL, scope);
+	symtabEntry * sym = new_helper_variable($1->type, scope);
 	symtabEntry * i = new_helper_variable(INTEGER, scope);
 	
 	new_quadruple(i->name, Q_ASSIGNMENT, $3->sym, "");
@@ -374,6 +382,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 } 
 | expression '+' expression {
 	symtabEntry * sym = new_helper_variable(REAL, scope);
@@ -381,6 +390,11 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
+	if ($1->type == $3->type) {
+		$$->type = $1->type;
+	} else {
+		$$->type = REAL;
+	}
 } 
 | expression '-' expression {
 	symtabEntry * sym = new_helper_variable(REAL, scope);
@@ -388,6 +402,11 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
+	if ($1->type == $3->type) {
+		$$->type = $1->type;
+	} else {
+		$$->type = REAL;
+	}
 } 
 | expression '*' expression {
 	symtabEntry * sym = new_helper_variable(REAL, scope);
@@ -395,6 +414,11 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
+	if ($1->type == $3->type) {
+		$$->type = $1->type;
+	} else {
+		$$->type = REAL;
+	}
 } 
 | expression '/' expression {
 	symtabEntry * sym = new_helper_variable(REAL, scope);
@@ -402,13 +426,24 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
+	if ($1->type == $3->type) {
+		$$->type = $1->type;
+	} else {
+		$$->type = REAL;
+	}
 } 
 | expression '%' expression {
-	symtabEntry * sym = new_helper_variable(REAL, scope);
+	symtabEntry * sym = new_helper_variable($1->type, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_MOD, $1->sym, $3->sym);
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
+	if ($1->type == $3->type) {
+		$$->type = $1->type;
+	} else {
+		$$->type = REAL;
+	}
+
 }
 | '!' expression {
 	symtabEntry * sym = new_helper_variable(INTEGER, scope);
@@ -416,6 +451,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
+	$$->type = INTEGER;
 	
 	quadruple * true_quad, * false_quad;
 	
@@ -428,7 +464,7 @@ expression
 	$$ = $2;
 }
 | '-' expression %prec U_MINUS {
-	symtabEntry * sym = new_helper_variable(REAL, scope);
+	symtabEntry * sym = new_helper_variable($2->type, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_MINUS, "0", $2->sym);
 	
 	$$ = new_expression();
@@ -437,6 +473,12 @@ expression
 | CONSTANT {
 	$$ = new_expression();
 	$$->sym = strdup($1);
+	
+	if (strchr($1, '.')) {
+		$$->type = REAL;
+	} else {
+		$$->type = INTEGER;
+	}
 }
 | '(' expression ')' {
 	$$ = $2;
@@ -461,6 +503,7 @@ expression
 	
 	$$ = new_expression();
   $$->sym = sym->name;
+	$$->type = get_function_type($1);
 }
 | id '('  ')' {
 	function_and_parameter_check($1, 0);
@@ -473,12 +516,14 @@ expression
 	
 	$$ = new_expression();
   $$->sym = sym->name;
+	$$->type = get_function_type($1);
 }
 | id {
 	variable_check($1, scope);
 	
 	$$ = new_expression();
 	$$->sym = strdup($1);
+	$$->type = get_variable_type($1, scope);
 }
 ;
 
