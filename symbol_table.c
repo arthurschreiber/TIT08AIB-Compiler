@@ -18,9 +18,9 @@ extern symtabEntry * theSymboltable;
 void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile){
 	//writes the Symboltable in the outFile formated in a table view 
 	
-	fprintf (outputFile, "Symboltabelle\n");
-	fprintf (outputFile, "Nr\tName                    Type    Int_Typ Offset\tLine\tIndex1\tIndex2\tVater\tParameter\n");
-	fprintf (outputFile, "---------------------------------------------------------------------------------------------\n");
+	printf("Symboltabelle\n");
+	printf("Nr\tName                    Type    Int_Typ Offset\tLine\tIndex1\tIndex2\tVater\tParameter\n");
+	printf("---------------------------------------------------------------------------------------------\n");
 	
 	
 	//variables
@@ -32,7 +32,7 @@ void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile){
 	currentEntry = Symboltable;
 	do{
 		//walks through the Symboltable
-		fprintf(outputFile, "%d:\t",currentEntry->number); 
+		printf("%d:\t",currentEntry->number);
 		
 		
 		strncpy(helpString,currentEntry->name,20);
@@ -41,24 +41,24 @@ void writeSymboltable (symtabEntry * Symboltable, FILE * outputFile){
 			helpString[j]=' ';
 		}
 		helpString[20]=0;
-		fprintf(outputFile, "%s\t",helpString);
+		printf("%s\t",helpString);
 		
 		getSymbolTypePrintout(currentEntry->type,helpString);
-		fprintf(outputFile, "%s",helpString);
+		printf("%s",helpString);
 		
 		getSymbolTypePrintout(currentEntry->internType,helpString);
-		fprintf(outputFile, "%s",helpString);
+		printf("%s",helpString);
 		
-		fprintf(outputFile, "%d\t\t",currentEntry->offset);
-		fprintf(outputFile, "%d\t\t",currentEntry->line);
-		fprintf(outputFile, "%d\t\t",currentEntry->index1);
-		fprintf(outputFile, "%d\t\t",currentEntry->index2);
+		printf("%d\t\t",currentEntry->offset);
+		printf("%d\t\t",currentEntry->line);
+		printf("%d\t\t",currentEntry->index1);
+		printf("%d\t\t",currentEntry->index2);
 		if(currentEntry->vater){
-			fprintf(outputFile, "%d\t\t",currentEntry->vater->number);
+			printf("%d\t\t",currentEntry->vater->number);
 		}else{
-			fprintf(outputFile, "0\t\t");
+			printf("0\t\t");
 		}
-		fprintf(outputFile, "%d\t\t\n",currentEntry->parameter);
+		printf("%d\t\t\n",currentEntry->parameter);
 		
 		fflush(outputFile);
 		

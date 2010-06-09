@@ -71,7 +71,8 @@ void append_quadrupel(quadruple * quad) {
 void compile_quadruplecode() {
 	quadruple * current_quad = quadList;
 	
-	printf("--- Quadruplecode:\n");
+	printf("Quadrupelcode Listing\n");
+	printf("---------------------\n");
 	
 	if (current_quad == NULL) {
 		printf("Nothing to generate\n");
@@ -83,7 +84,7 @@ void compile_quadruplecode() {
 			continue;
 		}
 		
-		printf("%i: ", current_quad->line);
+		printf("%i\t", current_quad->line);
 		switch (current_quad->operator) {
 			case Q_ASSIGNMENT:
 				printf("%s := %s \n", current_quad->result, current_quad->operand_1);
@@ -147,6 +148,4 @@ void compile_quadruplecode() {
 		}
 		
 	} while ((current_quad = current_quad->next) != NULL);
-	
-	printf("---");
 }
