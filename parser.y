@@ -54,7 +54,7 @@ bool in_boolean_context = false;
 %%
 
 programm
-: function                  
+: function
 | programm function         
 ;
 
@@ -78,6 +78,10 @@ function
 | var_type id '(' parameter_list ')' function_body {
 	update_and_append_scope(scope, $2, $1, $4);
 	scope = new_symbol();
+	// Generate a return quad here, so we can
+	// handle the case of an if ... else as the last statement
+	// in a function_body.
+	new_quadruple("", Q_RETURN, NULL, NULL);
 }
 ;
 
@@ -115,15 +119,13 @@ var_type
 
 
 statement_list
-: statement {
-	$$ = $1;
-	backpatch($1->nextlist, get_next_quad());
-}
+: statement
 | statement_list marker statement  {
 	backpatch($1->nextlist, $2);
 	
 	$$ = new_statement();
 	$$->nextlist = $3->nextlist;
+	backpatch($3->nextlist, get_next_quad());
 }
 ;
 
