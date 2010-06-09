@@ -363,35 +363,35 @@ expression
 	$$->sym = quad->result;
 } 
 | expression '+' expression {
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(REAL, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_PLUS, $1->sym, $3->sym);
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
 } 
 | expression '-' expression {
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(REAL, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_MINUS, $1->sym, $3->sym);
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
 } 
 | expression '*' expression {
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(REAL, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_MULTIPLY, $1->sym, $3->sym);
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
 } 
 | expression '/' expression {
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(REAL, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_DIVIDE, $1->sym, $3->sym);
 	
 	$$ = new_expression();
 	$$->sym = quad->result;
 } 
 | expression '%' expression {
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(REAL, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_MOD, $1->sym, $3->sym);
 	
 	$$ = new_expression();
@@ -415,7 +415,7 @@ expression
 	$$ = $2;
 }
 | '-' expression %prec U_MINUS {
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(REAL, scope);
 	quadruple * quad = new_quadruple(sym->name, Q_MINUS, "0", $2->sym);
 	
 	$$ = new_expression();
