@@ -113,33 +113,28 @@ void compile_quadruplecode() {
 				printf("%s := %s - %s\n", current_quad->result, current_quad->operand_1, current_quad->operand_2);
 				break;
 			case Q_GREATER_OR_EQUAL:
-				printf("if %s >= %s GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
+				printf("IF (%s >= %s) GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
 				break;
 			case Q_LESS_OR_EQUAL:
-				printf("if %s <= %s GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
+				printf("IF (%s <= %s) GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
 				break;
 			case Q_GREATER:
-				printf("if %s > %s GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
+				printf("IF (%s > %s) GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
 				break;
 			case Q_LESS:
-				printf("if %s < %s GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
+				printf("IF (%s < %s) GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
 				break;
 			case Q_NOT_EQUAL:
-				printf("if %s != %s GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
+				printf("IF (%s <> %s) GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
 				break;
 			case Q_EQUAL:
-				printf("if %s == %s GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
+				printf("IF (%s = %s) GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
 				break;
 			case Q_PARAM:
 				printf("PARAM %s\n", current_quad->operand_1);
 				break;
 			case Q_GOTO:
-				if (current_quad->goto_next != NULL) {
-					printf("GOTO %i\n", current_quad->goto_next->line);
-				} else {
-					printf("GOTO somewhere\n");
-				}
-
+				printf("GOTO %i\n", current_quad->goto_next->line);
 				break;
 			case Q_RETURN:
 				printf("RETURN %s\n", current_quad->result);
