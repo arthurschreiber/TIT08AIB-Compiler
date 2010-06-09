@@ -498,7 +498,7 @@ expression
 	char * call = (char *) malloc(sizeof(char) * 100);
 	sprintf(call, "CALL %s, %i", $1, param_count);
 
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(get_function_type($1), scope);
 	new_quadruple(sym->name, Q_ASSIGNMENT, call, NULL);
 	
 	$$ = new_expression();
@@ -511,7 +511,7 @@ expression
 	char * call = (char *) malloc(sizeof(char) * 100);
 	sprintf(call, "CALL %s, 0", $1);
 	
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	symtabEntry * sym = new_helper_variable(get_function_type($1), scope);
 	new_quadruple(sym->name, Q_ASSIGNMENT, call, NULL);
 	
 	$$ = new_expression();
