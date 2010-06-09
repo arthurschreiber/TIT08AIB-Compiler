@@ -356,11 +356,24 @@ expression
 	false_quad->goto_next = get_next_quad();
 }
 | expression SHIFTLEFT expression {
-	symtabEntry * sym = new_helper_variable(INTEGER, scope);
-	quadruple * quad = new_quadruple(sym->name, Q_SHIFT, $1->sym, $3->sym);
+	symtabEntry * sym = new_helper_variable(REAL, scope);
+	symtabEntry * i = new_helper_variable(INTEGER, scope);
+	
+	new_quadruple(i->name, Q_ASSIGNMENT, $3->sym, "");
+	new_quadruple(sym->name, Q_ASSIGNMENT, $1->sym, "");
+	
+	quadruple * quad = new_quadruple(NULL, Q_NOT_EQUAL, i->name, "0");
+	quadruple * goto_quad = new_quadruple(NULL, Q_GOTO, NULL, NULL);
+	quadruple * multiply_quad = new_quadruple(sym->name, Q_MULTIPLY, sym->name, "2");
+	new_quadruple(i->name, Q_DEC, i->name, NULL);
+	quadruple * back_quad = new_quadruple(NULL, Q_GOTO, NULL, NULL);
+	
+	quad->goto_next = multiply_quad;
+	back_quad->goto_next = quad;
+	goto_quad->goto_next = get_next_quad();
 	
 	$$ = new_expression();
-	$$->sym = quad->result;
+	$$->sym = sym->name;
 } 
 | expression '+' expression {
 	symtabEntry * sym = new_helper_variable(REAL, scope);
