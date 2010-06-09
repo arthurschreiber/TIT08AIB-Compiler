@@ -461,7 +461,9 @@ expression
 	$$ = new_expression();
   $$->sym = sym->name;
 }
-| id { 
+| id {
+	variable_check($1, scope);
+	
 	$$ = new_expression();
 	$$->sym = strdup($1);
 }

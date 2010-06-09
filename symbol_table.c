@@ -121,6 +121,12 @@ void function_and_parameter_check(char * name, int param_count) {
 	}
 }
 
+void variable_check(char * name, symtabEntry * scope) {
+	if (find_symbol_in_scope(name, scope) == NULL) {
+		printf("Error: There is no variable named '%s'in the current scope!\n", name);
+	}
+}
+
 symtabEntry * new_symbol() {
 	symtabEntry * symbol = (symtabEntry *) malloc(sizeof(symtabEntry));
 	
