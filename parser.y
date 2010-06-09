@@ -41,7 +41,7 @@ bool in_boolean_context = false;
 %type<quad> marker
 
 %type<exp> expression assignment
-%type<stmt> unmatched_statement statement matched_statement statement_list
+%type<stmt> unmatched_statement statement goto_end matched_statement statement_list
 %type<param> exp_list
 
 %left LOG_AND LOG_OR
@@ -116,8 +116,8 @@ var_type
 
 statement_list
 : statement {
-	$$ = new_statement();
-	$$->nextlist = $1->nextlist;
+	$$ = $1;
+	backpatch($1->nextlist, get_next_quad());
 }
 | statement_list marker statement  {
 	backpatch($1->nextlist, $2);
@@ -127,18 +127,24 @@ statement_list
 }
 ;
 
+goto_end: /* empty */ {
+	$$ = new_statement();
+	$$->nextlist = new_jumplist(get_next_quad());
+	new_quadruple("", Q_GOTO, NULL, NULL);
+};
+
 statement
 : matched_statement
 | unmatched_statement
 ;
 
 matched_statement
-: IF '(' start_bool assignment end_bool ')' marker matched_statement ELSE marker matched_statement {
+: IF '(' start_bool assignment end_bool ')' marker matched_statement goto_end ELSE marker matched_statement {
 	$$ = new_statement();
-	$$->nextlist = merge($8->nextlist, $11->nextlist);
-	
+	$$->nextlist = merge($9->nextlist, merge($8->nextlist, $12->nextlist));
+		
 	backpatch($4->truelist, $7);
-	backpatch($4->falselist, $10);
+	backpatch($4->falselist, $11);
 }
 | assignment ';' {
 	$$ = new_statement();
@@ -191,12 +197,12 @@ unmatched_statement
 	quadruple * quad = new_quadruple("", Q_GOTO, NULL, NULL);
 	quad->goto_next = $3;
 }
-| IF '(' start_bool assignment end_bool ')' marker matched_statement ELSE marker unmatched_statement {
+| IF '(' start_bool assignment end_bool ')' marker matched_statement goto_end ELSE marker unmatched_statement {
 	$$ = new_statement();
-	$$->nextlist = merge($8->nextlist, $11->nextlist);
+	$$->nextlist = merge($9->nextlist, merge($8->nextlist, $12->nextlist));
 	
 	backpatch($4->truelist, $7);
-	backpatch($4->falselist, $10);
+	backpatch($4->falselist, $11);
 }
 ;
 
