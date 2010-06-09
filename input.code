@@ -20,7 +20,7 @@ int main (void){
 	}
 	// what is the value of variable_2
 	
-	if(variable_3){
+	if(!variable_3){
 		return 0;
 	}else{
 		return 1;
