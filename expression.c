@@ -15,8 +15,6 @@ expression * new_expression() {
 	exp->sym = NULL;
 	exp->falselist = NULL;
 	exp->truelist = NULL;
-	
-	exp->boolean = false;
 
 	return exp;
 }

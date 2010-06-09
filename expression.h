@@ -13,10 +13,8 @@
 #include <stdlib.h>
 #include "jumplist.h"
 #include "symbol_table.h"
-#include <stdbool.h>
 
 typedef struct a_exp {
-	bool boolean;
 	char * sym;
 	struct a_jump * truelist;
 	struct a_jump * falselist;

@@ -9,6 +9,7 @@
 #include "y.tab.h"
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 	
 symtabEntry * scope;
@@ -198,9 +199,8 @@ unmatched_statement
 
 assignment
 : expression {
-	if (in_boolean_context && $1->boolean == false) {
+	if (in_boolean_context) {
 		$$ = new_expression();
-		$$->boolean = true;
 		
 		$$->truelist = new_jumplist(get_next_quad());
 		new_quadruple("", Q_NOT_EQUAL, $1->sym, "0");
