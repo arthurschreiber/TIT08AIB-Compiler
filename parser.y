@@ -387,9 +387,18 @@ expression
 	$$->sym = quad->result;
 }
 | '!' expression {
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, "0", NULL);
+	
 	$$ = new_expression();
-	$$->truelist = $2->falselist;
-	$$->falselist = $2->truelist;
+	$$->sym = sym->name;
+	
+	quadruple * true_quad, * false_quad;
+	
+	true_quad = new_quadruple("", Q_EQUAL, $2->sym, "0");
+	false_quad = new_quadruple("", Q_GOTO, NULL, NULL);
+	true_quad->goto_next = new_quadruple(sym->name, Q_ASSIGNMENT, "1", NULL);
+	false_quad->goto_next = get_next_quad();
 }
 | '+' expression %prec U_PLUS {
 	$$ = $2;
