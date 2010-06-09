@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "symbol_table.h"
+#include "quadruple.h"
 
 extern symtabEntry * theSymboltable;
 
@@ -118,7 +119,7 @@ symtabEntry * new_symbol() {
 	symbol->type 		= NOP;
 	symbol->internType 	= NOP;
 	symbol->offset 		= 0;
-	symbol->line 		= 0;
+	symbol->line 		= current_quad_line - 1;
 	symbol->index1 		= 0;
 	symbol->index2 		= 0;
 	symbol->vater 		= 0;

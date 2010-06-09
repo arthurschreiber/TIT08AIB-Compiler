@@ -5,16 +5,17 @@
 #include "jumplist.h"
 #include "expression.h"
 #include "statement.h"
+#include "parameter_queue.h"
 	
 #include "y.tab.h"
-
+	
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 	
 symtabEntry * scope;
 bool in_boolean_context = false;
-
+	
 %}
 
 //Bison declarations
@@ -26,6 +27,7 @@ bool in_boolean_context = false;
 	quadruple * quad;
 	statement * stmt;
 	expression * exp;
+	parameter_queue * param;
 }
 
 %token INT FLOAT VOID INC_OP DEC_OP LOG_AND LOG_OR NOT_EQUAL EQUAL
@@ -40,6 +42,7 @@ bool in_boolean_context = false;
 
 %type<exp> expression assignment
 %type<stmt> unmatched_statement statement matched_statement statement_list
+%type<param> exp_list
 
 %left LOG_AND LOG_OR
 %left LESS_OR_EQUAL GREATER_OR_EQUAL NOT_EQUAL EQUAL '<' '>'
@@ -133,7 +136,7 @@ matched_statement
 : IF '(' start_bool assignment end_bool ')' marker matched_statement ELSE marker matched_statement {
 	$$ = new_statement();
 	$$->nextlist = merge($8->nextlist, $11->nextlist);
-		
+	
 	backpatch($4->truelist, $7);
 	backpatch($4->falselist, $10);
 }
@@ -154,7 +157,7 @@ matched_statement
 	
 	$$->nextlist = $5->falselist;
 	backpatch($9->nextlist, $3);
-		
+	
 	quadruple * quad = new_quadruple("", Q_GOTO, NULL, NULL);
 	quad->goto_next = $3;
 }
@@ -210,11 +213,11 @@ assignment
 	} else {
 		$$ = $1;
 	}
-
+	
 }
 | id '=' expression {
 	new_quadruple(strdup($1), Q_ASSIGNMENT, $3->sym, NULL);
-
+	
 	$$ = new_expression();
 	$$->sym = strdup($1);
 }
@@ -305,7 +308,7 @@ expression
 	
 	$$ = new_expression();
 	$$->sym = sym->name;
-
+	
 	quadruple * true_quad, * false_quad;
 	
 	true_quad = new_quadruple("", Q_LESS_OR_EQUAL, $1->sym, $3->sym);
@@ -406,12 +409,33 @@ expression
 	$$ = $2;
 }
 | id '(' exp_list ')' {
+	int param_count = 0;
+	parameter_queue * start = $3;
+	
+	while (start != NULL) {
+		new_quadruple(NULL, Q_PARAM, start->sym, NULL);
+		start = start->next;
+		param_count++;
+	}
+
+	char * call = (char *) malloc(sizeof(char) * 100);
+	sprintf(call, "CALL %s, %i", $1, param_count);
+
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, call, NULL);
+	
 	$$ = new_expression();
-	$$->sym = "func(args)";
+  $$->sym = sym->name;
 }
 | id '('  ')' {
+	char * call = (char *) malloc(sizeof(char) * 100);
+	sprintf(call, "CALL %s, 0", $1);
+	
+	symtabEntry * sym = new_helper_variable(INTEGER, scope);
+	new_quadruple(sym->name, Q_ASSIGNMENT, call, NULL);
+	
 	$$ = new_expression();
-	$$->sym = "func(args)";
+  $$->sym = sym->name;
 }
 | id { 
 	$$ = new_expression();
@@ -420,8 +444,8 @@ expression
 ;
 
 exp_list
-: expression
-| exp_list ',' expression	
+: expression { $$ = new_parameter_queue($1->sym); }
+| exp_list ',' expression	{ $$ = $1; add_param($1, $3->sym); }
 ;
 
 id

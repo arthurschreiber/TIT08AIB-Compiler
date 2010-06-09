@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include "quadruple.h"
 
+int current_quad_line = 0;
+
 quadruple * new_empty_quad() {
 	quadruple * quad = (quadruple *) malloc(sizeof(quadruple));
 
@@ -20,7 +22,7 @@ quadruple * new_empty_quad() {
 	quad->result = NULL;
 	quad->next = NULL;
 	quad->goto_next = NULL;
-	quad->line = 0;
+	quad->line = current_quad_line++;
 	
 	quad->truelist = NULL;
 	quad->falselist = NULL;
@@ -76,18 +78,6 @@ void compile_quadruplecode() {
 		return;
 	}
 	
-	int curr_line = 0;
-	do {
-		if (current_quad->operator != Q_NOP) {
-			current_quad->line = curr_line++;
-		} else {
-			current_quad->line = curr_line;
-		}
-
-	} while ((current_quad = current_quad->next) != NULL);
-	
-	current_quad = quadList;
-	
 	do {
 		if (current_quad->operator == Q_NOP) {
 			continue;
@@ -139,6 +129,9 @@ void compile_quadruplecode() {
 				break;
 			case Q_EQUAL:
 				printf("if %s == %s GOTO %i\n", current_quad->operand_1, current_quad->operand_2, current_quad->goto_next->line);
+				break;
+			case Q_PARAM:
+				printf("PARAM %s\n", current_quad->operand_1);
 				break;
 			case Q_GOTO:
 				if (current_quad->goto_next != NULL) {

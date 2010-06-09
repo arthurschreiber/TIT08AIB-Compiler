@@ -17,7 +17,9 @@ typedef enum a_quad_type {
 	Q_PLUS, Q_MINUS,
 	
 	Q_GREATER_OR_EQUAL, Q_LESS_OR_EQUAL, Q_EQUAL, Q_NOT_EQUAL, Q_GREATER, Q_LESS,
-	Q_GOTO, Q_RETURN
+	Q_GOTO, Q_RETURN,
+	
+	Q_PARAM
 } quad_type;
 
 struct a_jump;
@@ -46,5 +48,7 @@ void init_quadruples();
 quadruple * get_next_quad();
 
 quadruple * next_quad;
+
+int current_quad_line;
 
 #endif
